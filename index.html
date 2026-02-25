@@ -2,12 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- PWA Settings for App Feel -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#1f1f1f" />
     <title>Pat's To-Do List</title>
-    
-    <!-- Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
@@ -86,9 +83,7 @@
             <button id="settings-btn" class="p-1.5 mr-2 text-textMuted hover:text-cyan hover:bg-bgHover rounded-full transition-all hover:rotate-90" title="Settings">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             </button>
-            <svg class="w-4 h-4 text-textMain" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
             <input type="range" id="theme-slider" min="0" max="100" class="w-24 md:w-32 accent-cyan cursor-pointer" title="Adjust Brightness">
-            <svg class="w-5 h-5 text-textMain" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
         </div>
     </header>
 
@@ -118,17 +113,16 @@
                 <div id="library-list" class="flex-1 overflow-y-auto custom-scroll p-3 space-y-2 drag-container transition-all" data-zone="library"></div>
             </div>
 
-            <!-- Bottom Section -->
+            <!-- Bottom Section (Backup & Branding) -->
             <div class="mt-auto flex flex-col border-t border-borderMain">
                 <div class="p-3 bg-bgSurface flex justify-between items-center text-xs border-b border-borderMain">
-                    <span class="text-textMuted font-bold uppercase tracking-wider">Sync Status: <span id="sync-indicator" class="text-cyan">Live</span></span>
+                    <span class="text-textMuted font-bold uppercase tracking-wider">Sync Status: <span class="text-cyan">Live (Firebase)</span></span>
                 </div>
             </div>
         </aside>
 
         <!-- Calendar Area -->
         <div class="flex-1 flex flex-col bg-bgMain relative min-w-0">
-            <!-- Calendar Toolbar -->
             <div class="px-6 py-4 border-b border-borderMain flex justify-between items-center bg-bgSurface shadow-sm z-10">
                 <div class="flex items-center gap-2">
                     <button id="prev-week" class="px-3 py-1.5 bg-bgMain border border-borderMain text-textMain rounded font-bold hover:bg-bgHover hover:text-cyan transition-colors shadow-sm">&larr; Prev</button>
@@ -146,24 +140,18 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Weekly Progress Bar -->
             <div class="w-full h-1.5 bg-bgSurface border-b border-borderMain relative z-10">
                 <div id="weekly-progress" class="h-full bg-gradient-to-r from-hotpink via-purple to-cyan w-0 transition-all duration-500 ease-out"></div>
             </div>
-
-            <!-- Calendar Grid -->
             <div class="flex-1 overflow-x-auto overflow-y-hidden custom-scroll">
-                <div id="calendar-grid" class="grid grid-cols-7 divide-x divide-borderMain min-w-[1100px] h-full pb-2">
-                    <!-- JS -->
-                </div>
+                <div id="calendar-grid" class="grid grid-cols-7 divide-x divide-borderMain min-w-[1100px] h-full pb-2"></div>
             </div>
         </div>
     </main>
 
     <!-- Modal for Settings -->
     <div id="settings-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
-        <div class="bg-bgSurface p-6 rounded-xl shadow-2xl w-[24rem] transform transition-transform duration-200 border border-borderMain text-textMain">
+        <div class="bg-bgSurface p-6 rounded-xl shadow-2xl w-[24rem] border border-borderMain text-textMain">
             <h3 class="text-xl font-black mb-5 tracking-tight flex items-center gap-2">Settings</h3>
             <div class="mb-5 bg-bgMain p-4 rounded-lg border border-borderMain">
                 <label class="flex items-center justify-between cursor-pointer group">
@@ -185,14 +173,14 @@
                 </div>
             </div>
             <div class="flex justify-end gap-3 pt-2">
-                <button id="close-settings-btn" class="px-6 py-2 bg-cyan text-black font-black uppercase tracking-wider rounded shadow-md hover:bg-opacity-90 hover:shadow-cyan/30 transition-all transform hover:scale-105 active:scale-95 text-sm">Save & Close</button>
+                <button id="close-settings-btn" class="px-6 py-2 bg-cyan text-black font-black uppercase tracking-wider rounded shadow-md hover:bg-opacity-90 hover:shadow-cyan/30 text-sm">Save & Close</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal for Edit Task (Simplified for length, full logic in JS) -->
+    <!-- Modal for Edit Task -->
     <div id="edit-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
-        <div class="bg-bgSurface p-6 rounded-xl shadow-2xl w-[32rem] transform transition-transform duration-200 border border-borderMain text-textMain">
+        <div class="bg-bgSurface p-6 rounded-xl shadow-2xl w-[32rem] border border-borderMain text-textMain">
             <h3 class="text-xl font-black mb-5 tracking-tight">Edit Task</h3>
             <input type="text" id="edit-text" spellcheck="true" class="w-full p-3 mb-5 bg-bgMain border border-borderMain rounded-md focus:outline-none focus:border-cyan focus:ring-1 focus:ring-cyan text-sm shadow-inner font-medium text-textMain">
             <div class="mb-5">
@@ -229,13 +217,13 @@
                 <button id="delete-edit-btn" class="px-4 py-2 text-red-500 font-bold hover:bg-red-500/20 rounded transition-colors text-sm">Delete Task</button>
                 <div class="flex gap-3">
                     <button id="cancel-edit-btn" class="px-5 py-2 text-textMuted font-bold hover:bg-bgHover rounded transition-colors text-sm border border-borderMain">Cancel</button>
-                    <button id="save-edit-btn" class="px-6 py-2 bg-cyan text-black font-black uppercase tracking-wider rounded shadow-md hover:bg-opacity-90 hover:shadow-cyan/30 transition-all transform hover:scale-105 active:scale-95 text-sm">Save Changes</button>
+                    <button id="save-edit-btn" class="px-6 py-2 bg-cyan text-black font-black uppercase tracking-wider rounded shadow-md hover:bg-opacity-90 hover:shadow-cyan/30 text-sm">Save Changes</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal for Delete Confirmation -->
+    <!-- Modal for Delete -->
     <div id="delete-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
         <div class="bg-bgSurface p-6 rounded-xl shadow-2xl w-[24rem] border border-borderMain text-textMain">
             <h3 class="text-xl font-black mb-2 tracking-tight text-red-500">Delete Task</h3>
@@ -265,459 +253,213 @@
         </div>
     </div>
 
-    <!-- Toast -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- MAIN LOGIC + FIREBASE SYNC -->
+    <div id="custom-context-menu" class="hidden absolute z-[100] bg-bgSurface border border-borderMain rounded-lg shadow-2xl py-1 w-48 text-sm text-textMain flex flex-col overflow-hidden backdrop-blur-md">
+        <button id="ctx-capitalize" class="px-4 py-2 text-left hover:bg-bgHover hover:text-cyan transition-colors flex items-center gap-2">Capitalize First</button>
+        <button id="ctx-fix-typos" class="px-4 py-2 text-left hover:bg-bgHover hover:text-cyan transition-colors flex items-center gap-2">Fix Common Typos</button>
+        <div class="border-t border-borderMain my-1"></div>
+        <button id="ctx-clear" class="px-4 py-2 text-left hover:bg-red-500/20 text-red-500 transition-colors flex items-center gap-2">Clear Input</button>
+    </div>
+
+    <!-- MAGIC SYNC LOGIC HERE -->
     <script type="module">
-        // 1. IMPORT FIREBASE (This makes it Sync!)
         import { db } from './src/firebase.js';
         import { doc, onSnapshot, setDoc } from "firebase/firestore";
 
-        // --- DATA & CONFIG ---
         const icons = {
             pin: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>`,
             check: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`,
             uncheck: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"></circle></svg>`,
             trash: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`
         };
-
         let audioCtx = null;
-        function initAudio() {
-            if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
-        }
-
-        const COLORS = [
-            { name: 'None', hex: null }, { name: 'Pitch Black', hex: '#000000' }, { name: 'Bubblegum Pink', hex: '#FF69B4' },
-            { name: 'Hot Pink', hex: '#FF1493' }, { name: 'Cyan', hex: '#00FFFF' }, { name: 'Lime', hex: '#32CD32' },
-            { name: 'Orange', hex: '#FF8C00' }, { name: 'Purple', hex: '#9400D3' }, { name: 'White', hex: '#FFFFFF' }
-        ];
-        
-        const EMOJIS = {
-            'Status': ['none', '❌', '✅', '🚩', '🚨', '🔥', '⭐'],
-            'Faces': ['none', '😀', '😎', '🤯', '🤠', '🤡', '👻'],
-            'Animals': ['none', '🐶', '🐱', '🐸', '🦄', '🦖'],
-            'Objects': ['none', '📚', '💻', '💰', '🔑', '🛒']
-        };
-
-        function formatLocalDate(date) {
-            return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
-        }
-
-        let state = {
-            appName: "Pat's To-Do List",
-            themeValue: 12,
-            soundEnabled: false,
-            soundPack: 'party',
-            currentDate: formatLocalDate(new Date()),
-            backlog: [],
-            library: [],
-            calendar: {}
-        };
-
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); }
+        const COLORS = [ { name: 'None', hex: null }, { name: 'Pitch Black', hex: '#000000' }, { name: 'Bubblegum Pink', hex: '#FF69B4' }, { name: 'Hot Pink', hex: '#FF1493' }, { name: 'Rose', hex: '#FF007F' }, { name: 'Coral', hex: '#FF7F50' }, { name: 'Peach', hex: '#FFDAB9' }, { name: 'Tangerine', hex: '#FF8C00' }, { name: 'Gold', hex: '#FFD700' }, { name: 'Lemon', hex: '#FFFACD' }, { name: 'Mint Green', hex: '#98FF98' }, { name: 'Lime', hex: '#32CD32' }, { name: 'Emerald', hex: '#50C878' }, { name: 'Teal', hex: '#008080' }, { name: 'Cyan', hex: '#00FFFF' }, { name: 'Sky Blue', hex: '#87CEEB' }, { name: 'Ocean Blue', hex: '#00BFFF' }, { name: 'Periwinkle', hex: '#CCCCFF' }, { name: 'Lavender', hex: '#E6E6FA' }, { name: 'Lilac', hex: '#C8A2C8' }, { name: 'Electric Purple', hex: '#BF00FF' }, { name: 'Deep Purple', hex: '#9400D3' }, { name: 'Magenta', hex: '#FF00FF' }, { name: 'Bright White', hex: '#FFFFFF' }, { name: 'Silver', hex: '#C0C0C0' }, { name: 'Slate', hex: '#708090' } ];
+        const EMOJIS = { 'Status': ['none', '❌', '✅', '🚩', '🏳️', '🏴', '🚨', '⚠️', '🔥', '❗', '‼️', '🆘', '⭐', '🌟', '💫', '❇️', '🔱', '💠', '📅', '🗓️', '🕰️', '⏰', '⏳', '🤝', '💼', '💊', '💉', '🩺', '🩹', '🏥', '🧬', '🩸'], 'Faces': ['none', '😀', '🥰', '😎', '🥳', '🤯', '🤠', '🫠', '🫡', '😴', '🤧', '🤡', '👽', '👻', '🤖'], 'Animals': ['none', '🐶', '🐱', '🦊', '🐸', '🐰', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐵', '🦄', '🐙', '🦑', '🦕', '🦖', '🐛', '🦋', '🐞', '🐝'], 'Food': ['none', '🍕', '🍔', '🍟', '🌭', '🥓', '🍣', '🍱', '🧋', '☕', '🍵', '🍩', '🍓', '🍑', '🍒', '🍎', '🍉', '🍌', '🥑', '🥦', '🥕'], 'Activities': ['none', '🎨', '🎮', '🎧', '🎤', '📷', '🧘‍♀️', '🛀', '🛍️', '🎉', '🎈', '🎁', '🏋️‍♀️'], 'Travel': ['none', '🚗', '🚙', '🚕', '🚌', '🛻', '🚓', '🚑', '🚒', '🏎️', '🏍️', '🛵', '🚲', '🚀', '🛸', '🚁', '🛶', '🚢', '🚂', '✈️'], 'Objects': ['none', '📚', '💻', '📲', '📞', '☎️', '🖥️', '🖨️', '⌨️', '🖱️', '🖲️', '🕹️', '⌚', '📹', '🔋', '🔌', '💡', '🔦', '💰', '💎', '🔑', '🔒', '📩', '📌', '📎', '✂️', '🗑️', '🔨', '🔧', '⚙️', '⏰', '🎀', '💖', '🛒', '👑', '💍', '🕶️'], 'Nature': ['none', '🌙', '☀️', '⭐', '✨', '🔥', '💧', '🌸', '🌵', '🍄', '🌹', '🌺', '🌻', '🌼', '🌷', '🌱', '🪴', '🌲', '🌳', '🌴', '🍁', '🍂', '🍃', '🌈', '☁️', '❄️', '🌊', '⚡'] };
+        function formatLocalDate(date) { return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0'); }
+        let state = { appName: "Pat's To-Do List", themeValue: 12, soundEnabled: false, soundPack: 'party', currentDate: formatLocalDate(new Date()), backlog: [], library: [], calendar: {} };
         function generateId() { return Date.now().toString() + Math.random().toString(36).substr(2, 5); }
 
-        // --- FIREBASE SYNC FUNCTIONS (REPLACING LOCALSTORAGE) ---
-        const docRef = doc(db, "sync-app", "global-data");
-
-        // 1. SAVE to Cloud
-        async function saveState() { 
-            try {
-                await setDoc(docRef, state);
-            } catch(e) { console.error("Sync Error", e); }
-        }
-        
-        // 2. LOAD from Cloud (Real-time)
+        // --- SYNC REPLACEMENT START ---
+        const docRef = doc(db, "apps", "pats-global-data");
+        async function saveState() { try { await setDoc(docRef, state); } catch(e) { console.error("Sync Error", e); } }
         function loadState() {
             onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists()) {
-                    // Update local state with cloud state
                     const data = docSnap.data();
                     state = { ...state, ...data };
-                    
-                    // Fix arrays if missing
                     if(!Array.isArray(state.backlog)) state.backlog = [];
                     if(!Array.isArray(state.library)) state.library = [];
                     if(!state.calendar) state.calendar = {};
-
-                    // Apply UI updates
-                    updateTheme(state.themeValue || 12);
+                    if(state.themeValue === undefined) state.themeValue = 12;
+                    updateTheme(state.themeValue);
                     const slider = document.getElementById('theme-slider');
-                    if(slider) slider.value = state.themeValue || 12;
+                    if(slider) slider.value = state.themeValue;
                     document.getElementById('app-title').textContent = state.appName;
-                    
                     renderAll();
-                } else {
-                    // First time? Create default
-                    saveState();
-                }
+                } else { saveState(); }
             });
         }
+        // --- SYNC REPLACEMENT END ---
 
-        // --- INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            setupTitleEdit();
-            setupEventListeners();
-            setupSettings();
-            loadState(); // Starts the Firebase listener
-        });
-
+        document.addEventListener('DOMContentLoaded', () => { setupTitleEdit(); setupEventListeners(); setupSettings(); loadState(); });
         let isPinActive = false;
-
         function setupEventListeners() {
+            setupContextMenu();
             document.getElementById('add-task-btn').onclick = addTask;
             document.getElementById('new-task-text').addEventListener('keypress', (e) => { if (e.key === 'Enter') addTask(); });
-
             const slider = document.getElementById('theme-slider');
             slider.addEventListener('input', (e) => updateTheme(e.target.value));
             slider.addEventListener('change', (e) => { state.themeValue = e.target.value; saveState(); });
-
             document.addEventListener('dblclick', (e) => {
                 const taskEl = e.target.closest('.task-item');
-                if (taskEl) {
-                    e.stopPropagation();
-                    window.getSelection().removeAllRanges(); 
-                    openEditor(taskEl.getAttribute('data-id'), taskEl.getAttribute('data-zone'), taskEl.getAttribute('data-date'));
-                }
+                if (taskEl) { e.stopPropagation(); window.getSelection().removeAllRanges(); openEditor(taskEl.getAttribute('data-id'), taskEl.getAttribute('data-zone'), taskEl.getAttribute('data-date')); }
             });
-
             document.getElementById('prev-week').onclick = () => shiftWeek(-1);
             document.getElementById('next-week').onclick = () => shiftWeek(1);
             document.getElementById('today-btn').onclick = () => { state.currentDate = formatLocalDate(new Date()); saveState(); };
             document.getElementById('date-picker').addEventListener('change', (e) => { if(e.target.value) { state.currentDate = e.target.value; saveState(); } });
-
-            // Editor
             document.getElementById('cancel-edit-btn').onclick = closeEditor;
             document.getElementById('save-edit-btn').onclick = saveEdit;
             document.getElementById('delete-edit-btn').onclick = deleteFromEditor;
-            
-            // Delete
             document.getElementById('cancel-delete-btn').onclick = cancelDelete;
             document.getElementById('confirm-delete-btn').onclick = confirmDelete;
-            
-            // Emoji
-            document.getElementById('edit-emoji-backspace').onclick = (e) => { e.preventDefault(); /* simplified for brevity */ };
+            document.getElementById('edit-emoji-backspace').onclick = (e) => { e.preventDefault(); /* ... */ };
             document.getElementById('edit-emoji-clear').onclick = (e) => { e.preventDefault(); if(editingContext) { editingContext.tempEmoji = 'none'; renderEditorPickers(editingContext.tempColor, 'none', editingContext.activeEmojiCategory); }};
             document.getElementById('edit-emoji-done').onclick = (e) => { e.preventDefault(); saveEdit(); };
-
-            // Rollover
             document.getElementById('rollover-btn').onclick = () => document.getElementById('rollover-modal').classList.remove('hidden');
             document.getElementById('cancel-rollover-btn').onclick = () => document.getElementById('rollover-modal').classList.add('hidden');
             document.getElementById('btn-move-tasks').onclick = () => rollOverTasks('move');
             document.getElementById('btn-copy-tasks').onclick = () => rollOverTasks('copy');
         }
-
-        function addTask() {
-            const input = document.getElementById('new-task-text');
-            let text = input.value.trim();
-            if (!text) return;
-            
-            const newTask = { id: generateId(), text, color: null, emoji: 'none', style: 'dot', isPinned: isPinActive, isCompleted: false };
-            if (isPinActive) state.library.push(newTask);
-            else state.backlog.push(newTask);
-            
-            input.value = '';
-            saveState();
-        }
-
-        function renderAll() {
-            renderSidebar();
-            renderCalendar();
-            setupDragAndDrop();
-        }
-
-        function renderSidebar() {
-            const backlogList = document.getElementById('backlog-list');
-            const libraryList = document.getElementById('library-list');
-            backlogList.innerHTML = ''; libraryList.innerHTML = '';
-            state.backlog.sort((a,b) => a.isCompleted - b.isCompleted).forEach(t => backlogList.appendChild(createTaskElement(t, 'backlog')));
-            state.library.sort((a,b) => a.isCompleted - b.isCompleted).forEach(t => libraryList.appendChild(createTaskElement(t, 'library')));
-        }
-
-        function createTaskElement(task, zone, dateString = null) {
-            const el = document.createElement('div');
-            el.className = `task-item task-card flex flex-col p-2.5 rounded-md bg-bgSurface border border-borderMain shadow-sm relative group select-none ${task.isCompleted ? 'opacity-50' : ''}`;
-            el.draggable = true;
-            el.id = `task-${task.id}`;
-            el.setAttribute('data-id', task.id); el.setAttribute('data-zone', zone);
-            if (dateString) el.setAttribute('data-date', dateString);
-            
-            if (task.color) {
-                el.style.setProperty('--task-color', task.color); el.style.setProperty('--task-color-alpha', task.color + '33'); 
-                if (task.style) el.classList.add(`style-${task.style}`);
-            }
-
-            el.ondragstart = (e) => {
-                const dragData = JSON.stringify({ id: task.id, zone, date: dateString });
-                e.dataTransfer.setData('text/plain', dragData);
-                setTimeout(() => el.style.opacity = '0.4', 0); el.classList.add('is-dragging');
-            };
-            el.ondragend = () => { el.style.opacity = task.isCompleted ? '0.5' : '1'; el.classList.remove('is-dragging'); renderAll(); };
-
-            const topRow = document.createElement('div'); topRow.className = 'flex items-start gap-1.5 w-full relative';
-            const leftPart = document.createElement('div'); leftPart.className = 'flex items-start gap-2 flex-1 min-w-0 w-full';
-            
-            if (task.style === 'dot' && task.color) {
-                const dot = document.createElement('span'); dot.className = 'w-3 h-3 rounded-full flex-shrink-0 shadow-sm border border-black/10 mt-1';
-                dot.style.backgroundColor = task.color; leftPart.appendChild(dot);
-            }
-            const textContainer = document.createElement('div');
-            textContainer.className = `text-sm font-semibold break-words whitespace-normal leading-snug flex-1 min-w-0 ${task.isCompleted ? 'line-through text-textMuted' : 'text-textMain'}`;
-            if (task.emoji && task.emoji !== 'none') textContainer.innerHTML += `<span class="text-lg drop-shadow-sm mr-1.5">${task.emoji}</span>`;
-            textContainer.appendChild(document.createTextNode(task.text));
-            leftPart.appendChild(textContainer); topRow.appendChild(leftPart);
-
-            const rightPart = document.createElement('div');
-            rightPart.className = 'absolute -top-1 -right-1 hidden group-hover:flex items-center gap-0.5 bg-bgSurface/95 backdrop-blur-md p-1 rounded-lg shadow-md border border-borderMain z-20';
-            const trashBtn = document.createElement('button'); trashBtn.innerHTML = icons.trash; trashBtn.className = 'p-1.5 text-red-500 hover:bg-red-500/20 rounded transition-colors';
-            trashBtn.onclick = (e) => { e.stopPropagation(); requestDelete(task.id, zone, dateString); };
-            const checkBtn = document.createElement('button'); checkBtn.innerHTML = task.isCompleted ? icons.check : icons.uncheck;
-            checkBtn.className = `p-1.5 rounded transition-colors hover:bg-bgHover ${task.isCompleted ? 'text-lime' : 'text-textMuted hover:text-lime'}`;
-            checkBtn.onclick = (e) => { e.stopPropagation(); toggleComplete(task.id, zone, dateString, e); };
-            rightPart.appendChild(trashBtn); rightPart.appendChild(checkBtn);
-            
-            el.appendChild(topRow); el.appendChild(rightPart);
-            return el;
-        }
-
-        function getStartOfWeek(date) {
-            let d;
-            if (typeof date === 'string' && date.length <= 10) { const parts = date.split('-'); d = new Date(parts[0], parts[1] - 1, parts[2]); } else { d = new Date(date); }
-            const day = d.getDay(); d.setDate(d.getDate() - day); d.setHours(0,0,0,0); return d;
-        }
-
-        function shiftWeek(offset) {
-            let d;
-            if (typeof state.currentDate === 'string' && state.currentDate.length <= 10) { const parts = state.currentDate.split('-'); d = new Date(parts[0], parts[1] - 1, parts[2]); } else { d = new Date(state.currentDate); }
-            d.setDate(d.getDate() + (offset * 7)); state.currentDate = formatLocalDate(d); saveState();
-        }
-
-        function renderCalendar() {
-            const grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
-            const startOfWeek = getStartOfWeek(state.currentDate);
-            const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(endOfWeek.getDate() + 6);
-            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            let labelText = `Week of ${monthNames[startOfWeek.getMonth()]} ${startOfWeek.getDate()}`;
-            if(startOfWeek.getMonth() !== endOfWeek.getMonth()) labelText += ` - ${monthNames[endOfWeek.getMonth()]} ${endOfWeek.getDate()}`;
-            else labelText += ` - ${endOfWeek.getDate()}`;
-            document.getElementById('week-label').textContent = labelText;
-            document.getElementById('date-picker').value = typeof state.currentDate === 'string' ? state.currentDate.split('T')[0] : formatLocalDate(new Date());
-
-            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            const todayStr = formatLocalDate(new Date());
-            
-            let total = 0; let completed = 0;
-            
-            for (let i = 0; i < 7; i++) {
-                const currentDate = new Date(startOfWeek); currentDate.setDate(currentDate.getDate() + i);
-                const dateStr = formatLocalDate(currentDate);
-                const col = document.createElement('div'); col.className = 'flex flex-col h-full border-r border-borderMain last:border-r-0 min-h-0';
-                const isToday = dateStr === todayStr;
-                col.innerHTML = `<div class="p-3 text-center border-b border-borderMain bg-bgSurface ${isToday ? 'shadow-[inset_0_-3px_0_0_#00FFFF]' : ''}"><div class="text-xs font-black uppercase tracking-wider ${isToday ? 'text-cyan' : 'text-textMuted'}">${dayNames[i]}</div><div class="text-lg font-bold ${isToday ? 'text-cyan' : ''}">${monthNames[currentDate.getMonth()]} ${currentDate.getDate()}</div></div>`;
-                const dropZone = document.createElement('div'); dropZone.className = 'flex-1 p-3 overflow-y-auto custom-scroll space-y-2 drag-container transition-colors min-h-0 bg-bgMain';
-                dropZone.setAttribute('data-zone', 'calendar'); dropZone.setAttribute('data-date', dateStr);
-                const tasks = state.calendar[dateStr] || [];
-                total += tasks.length; completed += tasks.filter(t => t.isCompleted).length;
-                tasks.sort((a,b) => a.isCompleted - b.isCompleted).forEach(t => dropZone.appendChild(createTaskElement(t, 'calendar', dateStr)));
-                col.appendChild(dropZone); grid.appendChild(col);
-            }
-            document.getElementById('weekly-progress').style.width = total === 0 ? '0%' : `${(completed / total) * 100}%`;
-        }
-
-        function setupDragAndDrop() {
-            document.querySelectorAll('.drag-container').forEach(zone => {
-                zone.ondragover = (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; zone.classList.add('drag-over'); 
-                    const afterElement = getDragAfterElement(zone, e.clientY);
-                    const currentDragging = document.querySelector('.is-dragging');
-                    if (currentDragging) {
-                        if (afterElement == null) zone.appendChild(currentDragging);
-                        else zone.insertBefore(currentDragging, afterElement);
-                    }
-                };
-                zone.ondragleave = (e) => { if (!zone.contains(e.relatedTarget)) zone.classList.remove('drag-over'); };
-                zone.ondrop = (e) => { e.preventDefault(); zone.classList.remove('drag-over'); 
-                    const dataStr = e.dataTransfer.getData('text/plain'); if (!dataStr) return;
-                    const data = JSON.parse(dataStr);
-                    handleDrop(data.id, data.zone, data.date, zone.getAttribute('data-zone'), zone.getAttribute('data-date'));
-                };
-            });
-        }
-
-        function getDragAfterElement(container, y) {
-            const draggableElements = [...container.querySelectorAll('.task-item:not(.is-dragging)')];
-            return draggableElements.reduce((closest, child) => {
-                const box = child.getBoundingClientRect(); const offset = y - box.top - box.height / 2;
-                if (offset < 0 && offset > closest.offset) return { offset: offset, element: child }; else return closest;
-            }, { offset: Number.NEGATIVE_INFINITY }).element;
-        }
-
-        function handleDrop(taskId, sourceZone, sourceDate, targetZone, targetDate) {
-            const sourceList = getTaskList(sourceZone, sourceDate);
-            const taskIndex = sourceList.findIndex(t => t.id === taskId); if (taskIndex === -1) return;
-            const task = sourceList[taskIndex];
-            
-            let cloneTask = (sourceZone === 'library' && targetZone === 'calendar');
-            let taskToMove = cloneTask ? { ...task, id: generateId() } : task;
-            
-            if (!cloneTask) sourceList.splice(taskIndex, 1);
-            if (targetZone === 'library') taskToMove.isPinned = true; else if (targetZone === 'backlog') taskToMove.isPinned = false;
-
-            const targetList = getTaskList(targetZone, targetDate, true);
-            targetList.push(taskToMove);
-            saveState();
-        }
-
-        function toggleComplete(id, zone, dateString, event) {
-            let taskList = getTaskList(zone, dateString);
-            const task = taskList.find(t => t.id === id);
-            if(task) {
-                task.isCompleted = !task.isCompleted;
-                if(task.isCompleted) {
-                    if(state.soundEnabled) playSynthesizedSound(state.soundPack);
-                    if(typeof confetti !== 'undefined') confetti({ particleCount: 100, spread: 80, origin: { x: event ? event.clientX/window.innerWidth : 0.5, y: event ? event.clientY/window.innerHeight : 0.5 } });
-                }
-                saveState();
-            }
-        }
-
-        function deleteTask(id, zone, dateString) {
-            const sourceList = getTaskList(zone, dateString);
-            const idx = sourceList.findIndex(t => t.id === id);
-            if (idx !== -1) { sourceList.splice(idx, 1); saveState(); }
-        }
-
-        function getTaskList(zone, dateString, create = false) {
-            if (zone === 'backlog') return state.backlog;
-            if (zone === 'library') return state.library;
-            if (zone === 'calendar') {
-                if (create && !state.calendar[dateString]) state.calendar[dateString] = [];
-                return state.calendar[dateString] || [];
-            }
-            return [];
-        }
-
-        let editingContext = null;
-        function openEditor(taskId, zone, dateString) {
-            const taskList = getTaskList(zone, dateString);
-            const task = taskList.find(t => t.id === taskId);
-            if (!task) return;
-            editingContext = { task, zone, dateString };
-            document.getElementById('edit-text').value = task.text;
-            renderEditorPickers(task.color, task.emoji, 'Faces');
-            document.getElementById('edit-modal').classList.remove('hidden');
-        }
-
-        function renderEditorPickers(activeColor, activeEmoji, activeEmojiCategory) {
-            const cp = document.getElementById('edit-color-picker'); cp.innerHTML = '';
-            COLORS.forEach(c => {
-                const btn = document.createElement('button'); btn.className = `w-7 h-7 rounded-full mx-auto border ${activeColor === c.hex ? 'ring-2 ring-cyan scale-125' : ''}`;
-                if(c.hex) btn.style.backgroundColor = c.hex; else btn.textContent = '🚫';
-                btn.onclick = () => renderEditorPickers(c.hex, editingContext.tempEmoji, activeEmojiCategory);
-                cp.appendChild(btn);
-            });
-            const et = document.getElementById('edit-emoji-tabs'); et.innerHTML = '';
-            Object.keys(EMOJIS).forEach(cat => {
-                const tab = document.createElement('button'); tab.className = `px-3 py-1 text-xs rounded-md ${activeEmojiCategory === cat ? 'bg-cyan text-black' : 'bg-bgSurface text-textMuted'}`;
-                tab.textContent = cat; tab.onclick = () => renderEditorPickers(editingContext.tempColor, editingContext.tempEmoji, cat);
-                et.appendChild(tab);
-            });
-            const eg = document.getElementById('edit-emoji-grid'); eg.innerHTML = '';
-            EMOJIS[activeEmojiCategory].forEach(e => {
-                const btn = document.createElement('button'); btn.className = 'text-2xl rounded p-1 hover:bg-bgHover';
-                btn.textContent = e === 'none' ? '🚫' : e;
-                btn.onclick = () => { editingContext.tempEmoji = e; renderEditorPickers(editingContext.tempColor, e, activeEmojiCategory); };
-                eg.appendChild(btn);
-            });
-            editingContext.tempColor = activeColor; editingContext.tempEmoji = activeEmoji; editingContext.activeEmojiCategory = activeEmojiCategory;
-            document.getElementById('edit-emoji-preview').textContent = activeEmoji || 'none';
-        }
-
-        let pendingDeleteContext = null;
-        function requestDelete(id, zone, dateString) { pendingDeleteContext = { id, zone, dateString }; document.getElementById('delete-modal').classList.remove('hidden'); }
-        function confirmDelete() { if(pendingDeleteContext) deleteTask(pendingDeleteContext.id, pendingDeleteContext.zone, pendingDeleteContext.dateString); cancelDelete(); }
-        function cancelDelete() { pendingDeleteContext = null; document.getElementById('delete-modal').classList.add('hidden'); }
-        function deleteFromEditor() { if(editingContext) requestDelete(editingContext.task.id, editingContext.zone, editingContext.dateString); closeEditor(); }
-        
-        function saveEdit() {
-            if (!editingContext) return;
-            let text = document.getElementById('edit-text').value.trim();
-            if (!text) return;
-            let selectedStyle = 'dot';
-            document.getElementsByName('edit-style').forEach(radio => { if (radio.checked) selectedStyle = radio.value; });
-            
-            editingContext.task.text = text;
-            editingContext.task.style = selectedStyle;
-            editingContext.task.color = editingContext.tempColor;
-            editingContext.task.emoji = editingContext.tempEmoji;
-            saveState(); closeEditor();
-        }
-        function closeEditor() { document.getElementById('edit-modal').classList.add('hidden'); editingContext = null; }
-
-        function showToast(msg) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = 'bg-bgSurface border border-borderMain text-textMain px-4 py-3 rounded-md shadow-2xl flex items-center gap-3 font-medium text-sm';
-            toast.textContent = msg; container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        function rollOverTasks(mode) {
-            document.getElementById('rollover-modal').classList.add('hidden');
-            let movedCount = 0; const startOfWeek = getStartOfWeek(state.currentDate);
-            for (let i = 0; i < 7; i++) {
-                const currentDate = new Date(startOfWeek); currentDate.setDate(currentDate.getDate() + i);
-                const dateStr = formatLocalDate(currentDate);
-                const nextWeekDate = new Date(currentDate); nextWeekDate.setDate(nextWeekDate.getDate() + 7);
-                const nextDateStr = formatLocalDate(nextWeekDate);
-                if (state.calendar[dateStr]) {
-                    const unfinished = []; const finished = [];
-                    state.calendar[dateStr].forEach(task => {
-                        if (!task.isCompleted) {
-                            if (mode === 'copy') { unfinished.push({ ...task, id: generateId() }); finished.push(task); } else { unfinished.push(task); }
-                            movedCount++;
-                        } else { finished.push(task); }
-                    });
-                    if (mode === 'move') state.calendar[dateStr] = finished;
-                    if (unfinished.length > 0) { if (!state.calendar[nextDateStr]) state.calendar[nextDateStr] = []; state.calendar[nextDateStr].push(...unfinished); }
-                }
-            }
-            if(movedCount > 0) { saveState(); showToast(`${mode === 'move' ? 'Moved' : 'Copied'} ${movedCount} tasks.`); }
-        }
-
-        // Settings (Simplified)
         function setupSettings() {
-            const settingsBtn = document.getElementById('settings-btn'); const settingsModal = document.getElementById('settings-modal');
-            const closeBtn = document.getElementById('close-settings-btn'); const toggle = document.getElementById('settings-sound-toggle');
-            settingsBtn.onclick = () => { 
-                settingsModal.classList.remove('hidden'); toggle.checked = state.soundEnabled; 
-                document.getElementById('toggle-bg').classList.toggle('bg-cyan', state.soundEnabled); 
-            };
-            closeBtn.onclick = () => settingsModal.classList.add('hidden');
-            toggle.onchange = () => { 
-                state.soundEnabled = toggle.checked; saveState(); 
-                document.getElementById('toggle-bg').classList.toggle('bg-cyan', state.soundEnabled); 
-                document.getElementById('toggle-dot').classList.toggle('translate-x-4', state.soundEnabled); 
-            };
+            const sb = document.getElementById('settings-btn'); const sm = document.getElementById('settings-modal');
+            const cb = document.getElementById('close-settings-btn'); const ti = document.getElementById('settings-sound-toggle');
+            sb.onclick = () => { sm.classList.remove('hidden'); ti.checked = state.soundEnabled; document.getElementById('settings-sound-pack').value = state.soundPack; syncUI(); };
+            cb.onclick = () => sm.classList.add('hidden');
+            ti.onchange = () => { state.soundEnabled = ti.checked; syncUI(); saveState(); };
+            document.getElementById('settings-sound-pack').onchange = (e) => { state.soundPack = e.target.value; saveState(); if(state.soundEnabled) playSynthesizedSound(state.soundPack); };
+            function syncUI() { 
+                const bg = document.getElementById('toggle-bg'); const dot = document.getElementById('toggle-dot');
+                if(state.soundEnabled) { bg.classList.replace('bg-borderMain','bg-cyan'); dot.classList.add('translate-x-4'); } 
+                else { bg.classList.replace('bg-cyan','bg-borderMain'); dot.classList.remove('translate-x-4'); }
+            }
+        }
+        function playSynthesizedSound(type) {
+            if(!state.soundEnabled) return;
+            try { initAudio(); const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination);
+                if(type==='party'){osc.frequency.setValueAtTime(523,t);osc.frequency.setValueAtTime(1046,t+0.2);gain.gain.linearRampToValueAtTime(0.3,t+0.05);osc.start(t);osc.stop(t+0.6);}
+                else {osc.frequency.setValueAtTime(200,t);gain.gain.linearRampToValueAtTime(0.1,t+0.1);osc.start(t);osc.stop(t+0.2);}
+            } catch(e){}
         }
         function updateTheme(val) {
-            const root = document.documentElement;
-            root.style.setProperty('--bg-main', `hsl(0, 0%, ${val}%)`);
-            root.style.setProperty('--bg-surface', `hsl(0, 0%, ${Math.max(0, val < 50 ? Number(val) + 6 : Number(val) - 3)}%)`);
-            root.style.setProperty('--bg-hover', `hsl(0, 0%, ${Math.max(0, val < 50 ? Number(val) + 12 : Number(val) - 8)}%)`);
-            root.style.setProperty('--border-main', `hsl(0, 0%, ${Math.max(0, val < 50 ? Number(val) + 15 : Number(val) - 15)}%)`);
-            if (val < 50) { root.style.setProperty('--text-main', `hsl(0, 0%, 95%)`); root.style.setProperty('--text-muted', `hsl(0, 0%, 65%)`); } 
-            else { root.style.setProperty('--text-main', `hsl(0, 0%, 10%)`); root.style.setProperty('--text-muted', `hsl(0, 0%, 40%)`); }
+            const r = document.documentElement; r.style.setProperty('--bg-main', `hsl(0, 0%, ${val}%)`);
+            r.style.setProperty('--bg-surface', `hsl(0, 0%, ${Math.max(0, val<50?Number(val)+6:Number(val)-3)}%)`);
+            r.style.setProperty('--bg-hover', `hsl(0, 0%, ${Math.max(0, val<50?Number(val)+12:Number(val)-8)}%)`);
+            r.style.setProperty('--border-main', `hsl(0, 0%, ${Math.max(0, val<50?Number(val)+15:Number(val)-15)}%)`);
+            if(val<50){r.style.setProperty('--text-main',`hsl(0,0%,95%)`);r.style.setProperty('--text-muted',`hsl(0,0%,65%)`);}
+            else{r.style.setProperty('--text-main',`hsl(0,0%,10%)`);r.style.setProperty('--text-muted',`hsl(0,0%,40%)`);}
         }
         function setupTitleEdit() {
             const t = document.getElementById('app-title');
             t.ondblclick = () => { t.contentEditable = "true"; t.focus(); };
-            t.onblur = () => { t.contentEditable = "false"; if(t.textContent !== state.appName) { state.appName = t.textContent; saveState(); }};
+            t.onblur = () => { t.contentEditable = "false"; if(t.textContent!==state.appName){state.appName=t.textContent;saveState();} };
         }
-        function playSynthesizedSound(type) {
-            initAudio(); const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination);
-            if(type==='party'){osc.frequency.setValueAtTime(523,t);osc.frequency.setValueAtTime(1046,t+0.2);gain.gain.linearRampToValueAtTime(0.3,t+0.05);osc.start(t);osc.stop(t+0.6);}
-            else {osc.frequency.setValueAtTime(200,t);gain.gain.linearRampToValueAtTime(0.1,t+0.1);osc.start(t);osc.stop(t+0.2);}
+        function capitalizeFirstLetter(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : s; }
+        const typoMap = {'teh':'the','dont':"don't",'im':"I'm"};
+        function fixTypos(t){ let n=t; for(const[k,v]of Object.entries(typoMap)){ n=n.replace(new RegExp(`\\b${k}\\b`,'gi'),v); } return n; }
+        let activeInputField = null;
+        function setupContextMenu() {
+            const m=document.getElementById('custom-context-menu');
+            [document.getElementById('new-task-text'),document.getElementById('edit-text')].forEach(i=>{
+                i.oncontextmenu=(e)=>{ e.preventDefault(); activeInputField=i; m.style.left=`${e.pageX}px`; m.style.top=`${e.pageY}px`; m.classList.remove('hidden'); };
+            });
+            document.onclick=(e)=>{if(!m.contains(e.target))m.classList.add('hidden');};
+            document.getElementById('ctx-clear').onclick=()=>{if(activeInputField)activeInputField.value='';m.classList.add('hidden');};
+            document.getElementById('ctx-capitalize').onclick=()=>{if(activeInputField)activeInputField.value=capitalizeFirstLetter(activeInputField.value);m.classList.add('hidden');};
+            document.getElementById('ctx-fix-typos').onclick=()=>{if(activeInputField)activeInputField.value=fixTypos(activeInputField.value);m.classList.add('hidden');};
+        }
+        function addTask() {
+            const i=document.getElementById('new-task-text'); let t=i.value.trim(); if(!t)return;
+            t=capitalizeFirstLetter(t); const n={id:generateId(),text:t,color:null,emoji:'none',style:'dot',isPinned:isPinActive,isCompleted:false};
+            if(isPinActive)state.library.push(n); else state.backlog.push(n);
+            i.value=''; saveState();
+        }
+        function renderAll() { renderSidebar(); renderCalendar(); setupDragAndDrop(); }
+        function renderSidebar() {
+            const b=document.getElementById('backlog-list'); const l=document.getElementById('library-list'); b.innerHTML=''; l.innerHTML='';
+            state.backlog.sort((a,b)=>a.isCompleted-b.isCompleted).forEach(t=>b.appendChild(createTaskElement(t,'backlog')));
+            state.library.sort((a,b)=>a.isCompleted-b.isCompleted).forEach(t=>l.appendChild(createTaskElement(t,'library')));
+        }
+        function createTaskElement(task,zone,dateString=null) {
+            const el=document.createElement('div'); el.className=`task-item task-card flex flex-col p-2.5 rounded-md bg-bgSurface border border-borderMain shadow-sm relative group select-none ${task.isCompleted?'opacity-50':''}`;
+            el.draggable=true; el.id=`task-${task.id}`; el.setAttribute('data-id',task.id); el.setAttribute('data-zone',zone); if(dateString)el.setAttribute('data-date',dateString);
+            if(task.color){ el.style.setProperty('--task-color',task.color); el.style.setProperty('--task-color-alpha',task.color+'33'); if(task.style)el.classList.add(`style-${task.style}`); }
+            el.ondragstart=(e)=>{ const d=JSON.stringify({id:task.id,zone,date:dateString}); e.dataTransfer.setData('text/plain',d); setTimeout(()=>el.style.opacity='0.4',0); el.classList.add('is-dragging'); };
+            el.ondragend=()=>{ el.style.opacity=task.isCompleted?'0.5':'1'; el.classList.remove('is-dragging'); renderAll(); };
+            el.innerHTML=`<div class="flex items-start gap-1.5 w-full relative"><div class="flex items-start gap-2 flex-1 min-w-0 w-full">${task.style==='dot'&&task.color?`<span class="w-3 h-3 rounded-full flex-shrink-0 shadow-sm border border-black/10 mt-1" style="background-color:${task.color}"></span>`:''} <div class="text-sm font-semibold break-words whitespace-normal leading-snug flex-1 min-w-0 ${task.isCompleted?'line-through text-textMuted':'text-textMain'}">${task.emoji!=='none'?`<span class="text-lg drop-shadow-sm mr-1.5 inline">${task.emoji}</span>`:''}${task.text}</div></div></div>`;
+            const rp=document.createElement('div'); rp.className='absolute -top-1 -right-1 hidden group-hover:flex items-center gap-0.5 bg-bgSurface/95 backdrop-blur-md p-1 rounded-lg shadow-md border border-borderMain z-20';
+            const tb=document.createElement('button'); tb.innerHTML=icons.trash; tb.className='p-1.5 text-red-500 hover:bg-red-500/20 rounded'; tb.onclick=(e)=>{e.stopPropagation();requestDelete(task.id,zone,dateString);};
+            const cb=document.createElement('button'); cb.innerHTML=task.isCompleted?icons.check:icons.uncheck; cb.className=`p-1.5 rounded hover:bg-bgHover ${task.isCompleted?'text-lime':'text-textMuted hover:text-lime'}`; cb.onclick=(e)=>{e.stopPropagation();toggleComplete(task.id,zone,dateString,e);};
+            rp.appendChild(tb); rp.appendChild(cb); el.appendChild(rp); return el;
+        }
+        function getStartOfWeek(d){ let x=typeof d==='string'?new Date(d.split('-')[0],d.split('-')[1]-1,d.split('-')[2]):new Date(d); x.setDate(x.getDate()-x.getDay()); x.setHours(0,0,0,0); return x; }
+        function shiftWeek(o){ let d=typeof state.currentDate==='string'?new Date(state.currentDate.split('-')[0],state.currentDate.split('-')[1]-1,state.currentDate.split('-')[2]):new Date(state.currentDate); d.setDate(d.getDate()+(o*7)); state.currentDate=formatLocalDate(d); saveState(); }
+        function renderCalendar() {
+            const g=document.getElementById('calendar-grid'); g.innerHTML=''; const s=getStartOfWeek(state.currentDate); const dn=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]; const mn=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; const ts=formatLocalDate(new Date());
+            let tot=0,com=0; for(let i=0;i<7;i++){
+                const c=new Date(s); c.setDate(c.getDate()+i); const ds=formatLocalDate(c); const col=document.createElement('div'); col.className='flex flex-col h-full border-r border-borderMain last:border-r-0 min-h-0';
+                col.innerHTML=`<div class="p-3 text-center border-b border-borderMain bg-bgSurface ${ds===ts?'shadow-[inset_0_-3px_0_0_#00FFFF]':''}"><div class="text-xs font-black uppercase tracking-wider ${ds===ts?'text-cyan':'text-textMuted'}">${dn[i]}</div><div class="text-lg font-bold ${ds===ts?'text-cyan':''}">${mn[c.getMonth()]} ${c.getDate()}</div></div>`;
+                const dz=document.createElement('div'); dz.className='flex-1 p-3 overflow-y-auto custom-scroll space-y-2 drag-container transition-colors min-h-0 bg-bgMain'; dz.setAttribute('data-zone','calendar'); dz.setAttribute('data-date',ds);
+                const t=state.calendar[ds]||[]; tot+=t.length; com+=t.filter(x=>x.isCompleted).length; t.sort((a,b)=>a.isCompleted-b.isCompleted).forEach(x=>dz.appendChild(createTaskElement(x,'calendar',ds))); col.appendChild(dz); g.appendChild(col);
+            }
+            const e=new Date(s); e.setDate(e.getDate()+6); document.getElementById('week-label').textContent=`Week of ${mn[s.getMonth()]} ${s.getDate()} - ${mn[e.getMonth()]} ${e.getDate()}`;
+            document.getElementById('weekly-progress').style.width=tot===0?'0%':`${(com/tot)*100}%`;
+        }
+        function setupDragAndDrop() {
+            document.querySelectorAll('.drag-container').forEach(z=>{
+                z.ondragover=(e)=>{e.preventDefault(); e.dataTransfer.dropEffect='move'; z.classList.add('drag-over'); 
+                    const cur=document.querySelector('.is-dragging'); const aft=getDragAfterElement(z,e.clientY); if(cur){if(aft==null)z.appendChild(cur);else z.insertBefore(cur,aft);}};
+                z.ondragleave=(e)=>{if(!z.contains(e.relatedTarget))z.classList.remove('drag-over');};
+                z.ondrop=(e)=>{e.preventDefault(); z.classList.remove('drag-over'); const d=JSON.parse(e.dataTransfer.getData('text/plain')); handleDrop(d.id,d.zone,d.date,z.getAttribute('data-zone'),z.getAttribute('data-date'));};
+            });
+        }
+        function getDragAfterElement(c,y){ return [...c.querySelectorAll('.task-item:not(.is-dragging)')].reduce((cl,ch)=>{const box=ch.getBoundingClientRect();const off=y-box.top-box.height/2;return(off<0&&off>cl.offset)?{offset:off,element:ch}:cl;},{offset:Number.NEGATIVE_INFINITY}).element; }
+        function handleDrop(id,sz,sd,tz,td) {
+            const sl=getTaskList(sz,sd); const idx=sl.findIndex(t=>t.id===id); if(idx===-1)return; const t=sl[idx];
+            let clone=(sz==='library'&&tz==='calendar'); let mv=clone?{...t,id:generateId()}:t;
+            if(!clone)sl.splice(idx,1); if(tz==='library')mv.isPinned=true; else if(tz==='backlog')mv.isPinned=false;
+            getTaskList(tz,td,true).push(mv); saveState();
+        }
+        function toggleComplete(id,z,d,e) {
+            let l=getTaskList(z,d); const t=l.find(x=>x.id===id); if(t){t.isCompleted=!t.isCompleted; if(t.isCompleted){if(state.soundEnabled)playSynthesizedSound(state.soundPack); if(typeof confetti!=='undefined')confetti({particleCount:100,spread:80,origin:{x:e?e.clientX/window.innerWidth:0.5,y:e?e.clientY/window.innerHeight:0.5}});} saveState();}
+        }
+        function deleteTask(id,z,d) { const l=getTaskList(z,d); const i=l.findIndex(x=>x.id===id); if(i!==-1){l.splice(i,1); saveState();} }
+        function getTaskList(z,d,c=false) { if(z==='backlog')return state.backlog; if(z==='library')return state.library; if(z==='calendar'){if(c&&!state.calendar[d])state.calendar[d]=[]; return state.calendar[d]||[];} return []; }
+        let editingContext=null;
+        function openEditor(id,z,d) {
+            const t=getTaskList(z,d).find(x=>x.id===id); if(!t)return; editingContext={task:t,zone:z,dateString:d};
+            document.getElementById('edit-text').value=t.text; renderEditorPickers(t.color,t.emoji,'Faces'); document.getElementById('edit-modal').classList.remove('hidden');
+        }
+        function renderEditorPickers(ac,ae,aec) {
+            const cp=document.getElementById('edit-color-picker'); cp.innerHTML=''; COLORS.forEach(c=>{const b=document.createElement('button');b.className=`w-7 h-7 rounded-full mx-auto border ${ac===c.hex?'ring-2 ring-cyan scale-125':''}`;if(c.hex)b.style.backgroundColor=c.hex;else b.textContent='🚫';b.onclick=()=>renderEditorPickers(c.hex,editingContext.tempEmoji,aec);cp.appendChild(b);});
+            const et=document.getElementById('edit-emoji-tabs'); et.innerHTML=''; Object.keys(EMOJIS).forEach(c=>{const b=document.createElement('button');b.className=`px-3 py-1 text-xs rounded-md ${aec===c?'bg-cyan text-black':'bg-bgSurface text-textMuted'}`;b.textContent=c;b.onclick=()=>renderEditorPickers(editingContext.tempColor,editingContext.tempEmoji,c);et.appendChild(b);});
+            const eg=document.getElementById('edit-emoji-grid'); eg.innerHTML=''; EMOJIS[aec].forEach(e=>{const b=document.createElement('button');b.className='text-2xl rounded p-1 hover:bg-bgHover';b.textContent=e==='none'?'🚫':e;b.onclick=()=>{editingContext.tempEmoji=e;renderEditorPickers(editingContext.tempColor,e,aec);};eg.appendChild(b);});
+            editingContext.tempColor=ac; editingContext.tempEmoji=ae; editingContext.activeEmojiCategory=aec; document.getElementById('edit-emoji-preview').textContent=ae||'none';
+        }
+        let pdc=null;
+        function requestDelete(id,z,d){pdc={id,z,d};document.getElementById('delete-modal').classList.remove('hidden');}
+        function confirmDelete(){if(pdc)deleteTask(pdc.id,pdc.z,pdc.d);cancelDelete();}
+        function cancelDelete(){pdc=null;document.getElementById('delete-modal').classList.add('hidden');}
+        function deleteFromEditor(){if(editingContext)requestDelete(editingContext.task.id,editingContext.zone,editingContext.dateString);closeEditor();}
+        function saveEdit(){if(!editingContext)return;let t=document.getElementById('edit-text').value.trim();if(!t)return;let s='dot';document.getElementsByName('edit-style').forEach(r=>{if(r.checked)s=r.value;});editingContext.task.text=capitalizeFirstLetter(t);editingContext.task.style=s;editingContext.task.color=editingContext.tempColor;editingContext.task.emoji=editingContext.tempEmoji;saveState();closeEditor();}
+        function closeEditor(){document.getElementById('edit-modal').classList.add('hidden');editingContext=null;}
+        function showToast(m){const c=document.getElementById('toast-container');const t=document.createElement('div');t.className='bg-bgSurface border border-borderMain text-textMain px-4 py-3 rounded-md shadow-2xl flex items-center gap-3 font-medium text-sm';t.innerHTML=`<span class="w-3 h-3 rounded-full bg-cyan shadow-[0_0_8px_rgba(0,255,255,0.8)]"></span>${m}`;c.appendChild(t);setTimeout(()=>t.remove(),3000);}
+        function rollOverTasks(m){
+            document.getElementById('rollover-modal').classList.add('hidden'); let mc=0; const s=getStartOfWeek(state.currentDate);
+            for(let i=0;i<7;i++){const c=new Date(s);c.setDate(c.getDate()+i);const ds=formatLocalDate(c);const nd=new Date(c);nd.setDate(nd.getDate()+7);const nds=formatLocalDate(nd);if(state.calendar[ds]){const u=[],f=[];state.calendar[ds].forEach(t=>{if(!t.isCompleted){if(m==='copy'){u.push({...t,id:generateId()});f.push(t);}else u.push(t);mc++;}else f.push(t);});if(m==='move')state.calendar[ds]=f;if(u.length>0){if(!state.calendar[nds])state.calendar[nds]=[];state.calendar[nds].push(...u);}}}
+            if(mc>0){saveState();showToast(`${m==='move'?'Moved':'Copied'} ${mc} tasks.`);}
         }
     </script>
 </body>

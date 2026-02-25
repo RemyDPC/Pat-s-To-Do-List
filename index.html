@@ -2,11 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Updated Viewport for Mobile App Feel (Handle Notch) -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <meta name="theme-color" content="#1f1f1f" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Pat's To-Do List v3.5 Mobile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Pat's To-Do List v3.5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
@@ -40,14 +37,6 @@
             --border-main: hsl(0, 0%, 25%);
         }
 
-        /* Safe Area Insets for iPhone Notch/Home Bar */
-        body {
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
-        }
-
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border-main); border-radius: 3px; }
@@ -55,388 +44,554 @@
         
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        .task-card { transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s; cursor: grab; }
-        .task-card:active, .task-card.is-dragging { cursor: grabbing !important; }
+        /* Task Cards Visual Modes & Interaction */
+        .task-card {
+            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s;
+            cursor: grab;
+        }
+        .task-card:hover {
+            transform: scale(1.02) translateY(-1px);
+            z-index: 10;
+        }
+        .task-card:active, .task-card.is-dragging {
+            cursor: grabbing !important;
+        }
 
-        /* Styles */
+        /* Visual Styles */
         .style-border { border-left: 5px solid var(--task-color, transparent) !important; }
         .style-highlighter { background-color: var(--task-color-alpha, transparent) !important; border: 1px solid var(--task-color, transparent) !important; }
         .style-glow { box-shadow: 0 0 12px 2px var(--task-color-alpha, transparent) !important; border: 1px solid var(--task-color-alpha, transparent) !important; }
         .style-gradient { background: linear-gradient(135deg, var(--task-color-alpha, transparent) 0%, transparent 100%) !important; border: 1px solid var(--task-color-alpha, transparent) !important; }
         .style-retro { border-bottom: 4px solid var(--task-color, transparent) !important; }
+        
         .drag-over { background-color: rgba(0, 255, 255, 0.1) !important; border-radius: 6px; box-shadow: inset 0 0 0 2px #00FFFF !important; }
+
+        ::selection { background-color: rgba(0, 255, 255, 0.3); color: inherit; }
         .custom-scroll::-webkit-scrollbar { width: 4px; }
     </style>
 </head>
 <body class="bg-bgMain text-textMain h-screen flex flex-col overflow-hidden transition-colors duration-300">
     
     <!-- Header -->
-    <header class="flex justify-between items-center px-4 py-2 bg-bgSurface shadow-md z-20 shrink-0">
-        <div class="flex items-center gap-2">
-            <h1 id="app-title" class="text-lg md:text-2xl font-black tracking-tight cursor-pointer hover:text-cyan truncate max-w-[150px] md:max-w-none">Pat's To-Do</h1>
-            <span class="hidden md:inline px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-cyan/10 text-cyan border border-cyan/20 rounded-full">v3.5 Live</span>
+    <header class="flex justify-between items-center px-6 py-3 bg-bgSurface shadow-md z-20">
+        <div class="flex items-center gap-3">
+            <h1 id="app-title" class="text-2xl font-black tracking-tight cursor-pointer hover:text-cyan transition-all transform origin-left" title="Double-click to rename">Pat's To-Do List</h1>
+            <span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-cyan/10 text-cyan border border-cyan/20 rounded-full select-none shadow-sm">v3.5 Live</span>
         </div>
         <div class="flex items-center gap-2">
-            <button id="settings-btn" class="p-1.5 text-textMuted hover:text-cyan hover:bg-bgHover rounded-full">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <button id="settings-btn" class="p-1.5 mr-2 text-textMuted hover:text-cyan hover:bg-bgHover rounded-full transition-all hover:rotate-90" title="Settings">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             </button>
-            <input type="range" id="theme-slider" min="0" max="100" class="w-20 md:w-32 accent-cyan cursor-pointer">
+            <svg class="w-4 h-4 text-textMain" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            <input type="range" id="theme-slider" min="0" max="100" class="w-24 md:w-32 accent-cyan cursor-pointer" title="Adjust Brightness">
+            <svg class="w-5 h-5 text-textMain" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
         </div>
     </header>
 
-    <!-- Main Content (Responsive Flex: Column on Mobile, Row on Desktop) -->
-    <main class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+    <!-- Main Content -->
+    <main class="flex-1 flex overflow-hidden">
         
-        <!-- Sidebar (Input & List) -->
-        <!-- Adjusted: Width full on mobile, fixed on desktop. Height shared on mobile. -->
-        <aside class="w-full md:w-[22rem] flex flex-col bg-bgSurface border-b md:border-b-0 md:border-r border-borderMain shadow-inner z-10 shrink-0 h-[45%] md:h-auto relative">
+        <!-- Sidebar -->
+        <aside class="w-[22rem] flex flex-col bg-bgSurface border-r border-borderMain shadow-inner z-10 flex-shrink-0">
             <!-- Input Area -->
-            <div class="p-3 border-b border-borderMain flex gap-2">
-                <input type="text" id="new-task-text" placeholder="Add task..." class="flex-1 p-2 bg-bgMain border border-borderMain rounded-md focus:border-cyan outline-none text-sm text-textMain">
-                <button id="add-task-btn" class="px-3 bg-cyan text-black font-bold uppercase rounded shadow text-xs">Add</button>
-            </div>
-
-            <!-- Tab System for Mobile Space Saving -->
-            <div class="flex md:hidden border-b border-borderMain">
-                <button id="tab-backlog" class="flex-1 py-2 text-xs font-bold uppercase text-cyan bg-bgMain border-r border-borderMain">Backlog</button>
-                <button id="tab-library" class="flex-1 py-2 text-xs font-bold uppercase text-textMuted hover:text-textMain">Library</button>
+            <div class="p-4 border-b border-borderMain flex flex-col gap-3 relative">
+                <input type="text" id="new-task-text" spellcheck="true" placeholder="What needs doing?" class="w-full p-2.5 bg-bgMain border border-borderMain rounded-md focus:outline-none focus:border-cyan focus:ring-1 focus:ring-cyan transition-shadow text-sm placeholder-textMuted shadow-inner text-textMain">
+                
+                <button id="add-task-btn" class="px-5 py-2.5 w-full bg-cyan text-black font-black uppercase tracking-wider rounded shadow hover:bg-opacity-90 hover:shadow-cyan/30 hover:shadow-lg transition-all transform hover:scale-[1.02] active:scale-95 text-sm mt-1">Add Task</button>
             </div>
 
             <!-- Backlog Zone -->
-            <div id="mobile-backlog-container" class="flex-1 flex flex-col min-h-0">
-                <h2 class="hidden md:block px-4 py-2 text-xs font-black text-textMuted uppercase tracking-widest bg-bgMain border-b border-borderMain">Backlog</h2>
-                <div id="backlog-list" class="flex-1 overflow-y-auto custom-scroll p-3 space-y-2 drag-container" data-zone="backlog"></div>
+            <div class="flex-1 flex flex-col min-h-0">
+                <h2 class="px-4 py-2 text-xs font-black text-textMuted uppercase tracking-widest bg-bgMain border-b border-borderMain shadow-sm z-10">Backlog (One-Time)</h2>
+                <div id="backlog-list" class="flex-1 overflow-y-auto custom-scroll p-3 space-y-2 drag-container transition-all" data-zone="backlog"></div>
             </div>
 
             <!-- Library Zone -->
-            <div id="mobile-library-container" class="hidden md:flex flex-1 flex-col min-h-0 border-t-2 border-borderMain">
-                <h2 class="hidden md:flex px-4 py-2 text-xs font-black text-textMuted uppercase tracking-widest bg-bgMain border-b border-borderMain justify-between items-center">
-                    Library <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+            <div class="flex-1 flex flex-col min-h-0 border-t-2 border-borderMain">
+                <h2 class="px-4 py-2 text-xs font-black text-textMuted uppercase tracking-widest bg-bgMain border-b border-borderMain flex justify-between items-center shadow-sm z-10">
+                    Library (Pinned)
+                    <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" title="Drag to Calendar to CLONE"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
                 </h2>
-                <div id="library-list" class="flex-1 overflow-y-auto custom-scroll p-3 space-y-2 drag-container" data-zone="library"></div>
+                <div id="library-list" class="flex-1 overflow-y-auto custom-scroll p-3 space-y-2 drag-container transition-all" data-zone="library"></div>
             </div>
 
-            <!-- Footer -->
-            <div class="hidden md:flex p-3 bg-bgSurface justify-between items-center text-xs border-t border-borderMain">
-                <span class="text-textMuted font-bold">Sync: <span class="text-cyan">Live</span></span>
-                <div class="flex gap-2">
-                    <button id="export-btn" class="p-1.5 border border-borderMain rounded hover:text-cyan"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg></button>
-                    <label class="p-1.5 border border-borderMain rounded hover:text-cyan cursor-pointer"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg><input type="file" id="import-file" class="hidden" accept=".json"></label>
+            <!-- Bottom Section (Backup & Branding) -->
+            <div class="mt-auto flex flex-col border-t border-borderMain">
+                <div class="p-3 bg-bgSurface flex justify-between items-center text-xs border-b border-borderMain">
+                    <span class="text-textMuted font-bold uppercase tracking-wider">Data Backup</span>
+                    <div class="flex gap-2">
+                        <button id="export-btn" class="p-1.5 text-textMuted hover:text-cyan transition-colors bg-bgMain border border-borderMain rounded shadow-sm hover:scale-105" title="Save Backup">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        </button>
+                        <label class="p-1.5 text-textMuted hover:text-cyan transition-colors bg-bgMain border border-borderMain rounded shadow-sm cursor-pointer hover:scale-105" title="Load Backup">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            <input type="file" id="import-file" class="hidden" accept=".json">
+                        </label>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="p-2 bg-bgMain flex justify-center items-center overflow-hidden border-t border-borderMain">
-                <a href="https://www.youtube.com/@KingDavid_Official" target="_blank" class="group flex items-center gap-2 text-xs font-bold text-textMuted hover:text-[#FFD700] transition-all">
-                    <span class="truncate">Built with ❤️ by @KingDavid_Official</span>
-                </a>
+
+                <!-- Branding Footer -->
+                <div class="p-3 bg-bgMain flex justify-center items-center overflow-hidden">
+                    <a href="https://www.youtube.com/@KingDavid_Official" target="_blank" rel="noopener noreferrer" class="group flex items-center gap-2 text-sm font-bold text-textMuted hover:text-[#FFD700] transition-all duration-300 transform hover:scale-105">
+                        <span class="truncate">Built with ❤️ by @KingDavid_Official</span>
+                        <svg class="w-5 h-5 flex-shrink-0 opacity-70 group-hover:opacity-100 group-hover:drop-shadow-[0_0_8px_rgba(255,215,0,0.8)] transition-all" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
+                </div>
             </div>
         </aside>
 
         <!-- Calendar Area -->
-        <div class="flex-1 flex flex-col bg-bgMain relative min-w-0 h-[55%] md:h-auto">
-            <div class="px-2 md:px-6 py-2 border-b border-borderMain flex justify-between items-center bg-bgSurface shadow-sm z-10">
-                <div class="flex items-center gap-1">
-                    <button id="prev-week" class="px-2 py-1 bg-bgMain border border-borderMain rounded hover:text-cyan">&larr;</button>
-                    <button id="today-btn" class="px-3 py-1 border border-cyan text-cyan font-bold rounded text-xs">Today</button>
-                    <button id="next-week" class="px-2 py-1 bg-bgMain border border-borderMain rounded hover:text-cyan">&rarr;</button>
-                </div>
-                <h2 id="week-label" class="text-xs md:text-xl font-black tracking-tight flex-1 text-center truncate px-2">Week...</h2>
+        <div class="flex-1 flex flex-col bg-bgMain relative min-w-0">
+            
+            <!-- Calendar Toolbar -->
+            <div class="px-6 py-4 border-b border-borderMain flex justify-between items-center bg-bgSurface shadow-sm z-10">
                 <div class="flex items-center gap-2">
-                    <button id="rollover-btn" class="p-1.5 text-orange hover:bg-orange/10 rounded"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg></button>
+                    <button id="prev-week" class="px-3 py-1.5 bg-bgMain border border-borderMain text-textMain rounded font-bold hover:bg-bgHover hover:text-cyan transition-colors shadow-sm">&larr; Prev</button>
+                    <button id="today-btn" class="px-4 py-1.5 border-2 border-cyan text-cyan font-bold rounded hover:bg-cyan hover:text-bgMain transition-all shadow-sm">Today</button>
+                    <button id="next-week" class="px-3 py-1.5 bg-bgMain border border-borderMain text-textMain rounded font-bold hover:bg-bgHover hover:text-cyan transition-colors shadow-sm">Next &rarr;</button>
+                </div>
+                
+                <h2 id="week-label" class="text-xl font-black tracking-tight flex-1 text-center">Week of ...</h2>
+                
+                <div class="flex items-center gap-3">
+                    <button id="rollover-btn" class="px-3 py-1.5 text-sm font-bold bg-orange/10 text-orange border border-orange/30 rounded hover:bg-orange hover:text-bgMain transition-all shadow-sm flex items-center gap-1" title="Move all unfinished tasks to next week">
+                        Move Unfinished &rarr;
+                    </button>
                     <div class="relative group">
-                        <label class="cursor-pointer p-1.5 rounded hover:text-cyan">
+                        <label class="cursor-pointer flex items-center gap-2 p-2 rounded-full hover:bg-bgHover hover:text-cyan transition-colors shadow-sm border border-transparent hover:border-borderMain bg-bgSurface">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             <input type="date" id="date-picker" class="absolute opacity-0 w-full h-full cursor-pointer top-0 left-0">
                         </label>
                     </div>
                 </div>
             </div>
-            <div class="w-full h-1 bg-bgSurface border-b border-borderMain relative z-10">
+
+            <!-- Weekly Progress Bar -->
+            <div class="w-full h-1.5 bg-bgSurface border-b border-borderMain relative z-10">
                 <div id="weekly-progress" class="h-full bg-gradient-to-r from-hotpink via-purple to-cyan w-0 transition-all duration-500 ease-out"></div>
             </div>
-            <!-- Scrollable Calendar -->
-            <div class="flex-1 overflow-x-auto overflow-y-hidden custom-scroll bg-bgMain">
-                <div id="calendar-grid" class="grid grid-cols-7 divide-x divide-borderMain min-w-[1000px] h-full pb-2"></div>
+
+            <!-- Calendar Grid -->
+            <div class="flex-1 overflow-x-auto overflow-y-hidden custom-scroll">
+                <div id="calendar-grid" class="grid grid-cols-7 divide-x divide-borderMain min-w-[1100px] h-full pb-2">
+                    <!-- JS -->
+                </div>
             </div>
         </div>
     </main>
 
-    <!-- SETTINGS, EDIT, DELETE MODALS REMAIN SAME (Rest of code below) -->
-    <div id="settings-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm"><div class="bg-bgSurface p-6 rounded-xl w-[24rem] border border-borderMain text-textMain"><h3 class="text-xl font-bold mb-4">Settings</h3><div class="mb-4"><label class="flex justify-between cursor-pointer"><span class="font-bold">Sound</span><input type="checkbox" id="settings-sound-toggle" class="accent-cyan"></label></div><div class="mb-4"><label class="block text-xs font-bold uppercase mb-2">Sound Pack</label><select id="settings-sound-pack" class="w-full p-2 bg-bgMain border border-borderMain rounded"><option value="party">Party</option><option value="levelup">Level Up</option><option value="fanfare">Fanfare</option><option value="coin">Coin</option></select></div><div class="flex justify-end"><button id="close-settings-btn" class="px-4 py-2 bg-cyan text-black font-bold rounded">Close</button></div></div></div>
+    <!-- Modal for Settings -->
+    <div id="settings-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-bgSurface p-6 rounded-xl shadow-2xl w-[24rem] transform transition-transform duration-200 border border-borderMain text-textMain">
+            <h3 class="text-xl font-black mb-5 tracking-tight flex items-center gap-2">
+                <svg class="w-6 h-6 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Settings
+            </h3>
+            
+            <div class="mb-5 bg-bgMain p-4 rounded-lg border border-borderMain">
+                <label class="flex items-center justify-between cursor-pointer group">
+                    <span class="text-sm font-bold text-textMain group-hover:text-cyan transition-colors">Sound Effects</span>
+                    <div class="relative">
+                        <input type="checkbox" id="settings-sound-toggle" class="sr-only">
+                        <div class="block bg-borderMain w-10 h-6 rounded-full transition-colors duration-300" id="toggle-bg"></div>
+                        <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-300" id="toggle-dot"></div>
+                    </div>
+                </label>
+                
+                <div class="mt-4 pt-4 border-t border-borderMain">
+                    <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-textMuted">Sound Pack</label>
+                    <select id="settings-sound-pack" class="w-full p-2 bg-bgSurface border border-borderMain hover:border-cyan transition-colors rounded text-sm outline-none cursor-pointer shadow-sm text-textMain">
+                        <option value="party">Party Horn 🎉</option>
+                        <option value="levelup">Level Up ⬆️</option>
+                        <option value="fanfare">Fanfare 🎺</option>
+                        <option value="cheer">Crowd Cheer 👏</option>
+                        <option value="magic">Magic Sparkle ✨</option>
+                        <option value="tada">Ta-Da! 👐</option>
+                        <option value="champagne">Champagne Pop 🍾</option>
+                        <option value="coin">Coin Ding 🪙</option>
+                    </select>
+                </div>
+            </div>
 
-    <div id="edit-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm"><div class="bg-bgSurface p-6 rounded-xl w-[90%] md:w-[32rem] border border-borderMain text-textMain max-h-[90vh] overflow-y-auto"><h3 class="text-xl font-bold mb-4">Edit Task</h3><input type="text" id="edit-text" class="w-full p-3 mb-4 bg-bgMain border border-borderMain rounded"><div class="mb-4"><label class="block text-xs font-bold uppercase mb-2">Color</label><div class="grid grid-cols-9 gap-2" id="edit-color-picker"></div></div><div class="mb-4"><label class="block text-xs font-bold uppercase mb-2">Style</label><div class="grid grid-cols-3 gap-2"><label><input type="radio" name="edit-style" value="dot"> Dot</label><label><input type="radio" name="edit-style" value="border"> Border</label><label><input type="radio" name="edit-style" value="glow"> Glow</label></div></div><div class="mb-4"><label class="block text-xs font-bold uppercase mb-2">Emoji</label><div class="bg-bgMain border border-borderMain rounded"><div class="flex justify-between p-2 border-b border-borderMain"><div id="edit-emoji-preview" class="text-xl px-2"></div><div><button id="edit-emoji-backspace" class="px-2 text-red-500">⌫</button><button id="edit-emoji-clear" class="px-2 text-red-500 text-xs uppercase">Clear</button></div></div><div id="edit-emoji-tabs" class="flex gap-1 overflow-x-auto p-2 border-b border-borderMain"></div><div id="edit-emoji-grid" class="grid grid-cols-8 gap-2 h-32 overflow-y-auto p-2"></div></div></div><div class="flex justify-between pt-4 border-t border-borderMain"><button id="delete-edit-btn" class="text-red-500 font-bold text-sm">Delete</button><div class="flex gap-2"><button id="cancel-edit-btn" class="px-4 py-2 border border-borderMain rounded">Cancel</button><button id="save-edit-btn" class="px-4 py-2 bg-cyan text-black font-bold rounded">Save</button></div></div></div></div>
+            <div class="flex justify-end gap-3 pt-2">
+                <button id="close-settings-btn" class="px-6 py-2 bg-cyan text-black font-black uppercase tracking-wider rounded shadow-md hover:bg-opacity-90 hover:shadow-cyan/30 transition-all transform hover:scale-105 active:scale-95 text-sm">Save & Close</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="delete-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center"><div class="bg-bgSurface p-6 rounded-xl w-[20rem] border border-borderMain text-textMain"><h3 class="text-xl font-bold text-red-500 mb-2">Delete?</h3><p class="text-sm text-textMuted mb-4">Cannot be undone.</p><div class="flex justify-end gap-3"><button id="cancel-delete-btn" class="px-4 py-2 border border-borderMain rounded">Cancel</button><button id="confirm-delete-btn" class="px-4 py-2 bg-red-500 text-white font-bold rounded">Delete</button></div></div></div>
+    <!-- Modal for Edit Task -->
+    <div id="edit-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-bgSurface p-6 rounded-xl shadow-2xl w-[32rem] transform transition-transform duration-200 border border-borderMain text-textMain">
+            <h3 class="text-xl font-black mb-5 tracking-tight">Edit Task</h3>
+            
+            <input type="text" id="edit-text" spellcheck="true" class="w-full p-3 mb-5 bg-bgMain border border-borderMain rounded-md focus:outline-none focus:border-cyan focus:ring-1 focus:ring-cyan text-sm shadow-inner font-medium text-textMain">
+            
+            <div class="mb-5">
+                <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-textMuted">Color Palette</label>
+                <div class="grid grid-cols-9 gap-2" id="edit-color-picker"></div>
+            </div>
+            
+            <div class="mb-5">
+                <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-textMuted">Visual Style</label>
+                <div class="grid grid-cols-3 gap-3 bg-bgMain p-3 rounded-md border border-borderMain">
+                    <label class="flex items-center gap-2 text-sm font-medium cursor-pointer hover:text-cyan transition-colors text-textMain">
+                        <input type="radio" name="edit-style" value="dot" class="text-cyan focus:ring-cyan accent-cyan cursor-pointer w-4 h-4"> Dot Mode
+                    </label>
+                    <label class="flex items-center gap-2 text-sm font-medium cursor-pointer hover:text-cyan transition-colors text-textMain">
+                        <input type="radio" name="edit-style" value="border" class="text-cyan focus:ring-cyan accent-cyan cursor-pointer w-4 h-4"> Border Mode
+                    </label>
+                    <label class="flex items-center gap-2 text-sm font-medium cursor-pointer hover:text-cyan transition-colors text-textMain">
+                        <input type="radio" name="edit-style" value="highlighter" class="text-cyan focus:ring-cyan accent-cyan cursor-pointer w-4 h-4"> Highlight Mode
+                    </label>
+                    <label class="flex items-center gap-2 text-sm font-medium cursor-pointer hover:text-cyan transition-colors text-textMain">
+                        <input type="radio" name="edit-style" value="glow" class="text-cyan focus:ring-cyan accent-cyan cursor-pointer w-4 h-4"> Glow Mode
+                    </label>
+                    <label class="flex items-center gap-2 text-sm font-medium cursor-pointer hover:text-cyan transition-colors text-textMain">
+                        <input type="radio" name="edit-style" value="gradient" class="text-cyan focus:ring-cyan accent-cyan cursor-pointer w-4 h-4"> Gradient Mode
+                    </label>
+                    <label class="flex items-center gap-2 text-sm font-medium cursor-pointer hover:text-cyan transition-colors text-textMain">
+                        <input type="radio" name="edit-style" value="retro" class="text-cyan focus:ring-cyan accent-cyan cursor-pointer w-4 h-4"> Retro Mode
+                    </label>
+                </div>
+            </div>
 
-    <div id="rollover-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center"><div class="bg-bgSurface p-6 rounded-xl w-[24rem] border border-borderMain text-textMain"><h3 class="text-lg font-bold mb-4">Rollover Tasks</h3><div class="flex flex-col gap-3"><button id="btn-move-tasks" class="p-3 border border-borderMain rounded hover:border-cyan text-left font-bold">Move to Next Week</button><button id="btn-copy-tasks" class="p-3 border border-borderMain rounded hover:border-cyan text-left font-bold">Copy to Next Week</button></div><button id="cancel-rollover-btn" class="mt-4 w-full py-2 border border-borderMain rounded">Cancel</button></div></div>
+            <div class="mb-6">
+                <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-textMuted">Emoji Library</label>
+                <div class="flex flex-col bg-bgMain border border-borderMain rounded-md shadow-inner overflow-hidden">
+                    <div class="flex justify-between items-center p-2 border-b border-borderMain bg-bgSurface">
+                        <div id="edit-emoji-preview" class="text-xl min-h-[32px] flex-1 truncate px-2 text-textMain tracking-widest">none</div>
+                        <div class="flex gap-1.5 items-center">
+                            <button id="edit-emoji-backspace" class="px-2.5 py-1 bg-bgMain border border-borderMain rounded text-textMuted hover:text-red-500 hover:border-red-500/50 transition-colors shadow-sm" title="Backspace">⌫</button>
+                            <button id="edit-emoji-clear" class="px-2.5 py-1 bg-bgMain border border-borderMain rounded text-textMuted hover:text-red-500 hover:border-red-500/50 transition-colors shadow-sm text-xs font-bold uppercase">Clear</button>
+                            <button id="edit-emoji-done" class="ml-1 px-3 py-1 bg-cyan text-black rounded text-xs font-bold uppercase transition-transform hover:scale-105 shadow-sm">Done ✓</button>
+                        </div>
+                    </div>
+                    <div id="edit-emoji-tabs" class="flex gap-1 overflow-x-auto custom-scroll p-2 border-b border-borderMain bg-bgSurface"></div>
+                    <div id="edit-emoji-grid" class="grid grid-cols-10 gap-2 h-40 overflow-y-auto p-2 custom-scroll bg-bgMain"></div>
+                </div>
+            </div>
 
-    <div id="export-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center"><div class="bg-bgSurface p-6 rounded-xl w-[24rem] border border-borderMain text-textMain"><h3 class="text-lg font-bold mb-4">Download Backup</h3><a id="manual-download-link" href="#" class="block w-full text-center p-4 border-2 border-dashed border-cyan text-cyan font-bold rounded">Right-Click -> Save Link As...</a><button id="cancel-export-btn" class="mt-4 w-full py-2 border border-borderMain rounded">Close</button></div></div>
+            <div class="flex justify-between items-center mt-6 pt-5 border-t border-borderMain">
+                <button id="delete-edit-btn" class="px-4 py-2 text-red-500 font-bold hover:bg-red-500/20 rounded transition-colors text-sm flex items-center gap-2 border border-transparent hover:border-red-500/30">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    Delete Task
+                </button>
+                <div class="flex gap-3">
+                    <button id="cancel-edit-btn" class="px-5 py-2 text-textMuted font-bold hover:bg-bgHover rounded transition-colors text-sm border border-borderMain">Cancel</button>
+                    <button id="save-edit-btn" class="px-6 py-2 bg-cyan text-black font-black uppercase tracking-wider rounded shadow-md hover:bg-opacity-90 hover:shadow-cyan/30 transition-all transform hover:scale-105 active:scale-95 text-sm">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <div id="custom-context-menu" class="hidden absolute z-[100] bg-bgSurface border border-borderMain rounded shadow-xl py-1 w-40 text-sm text-textMain"><button id="ctx-capitalize" class="w-full text-left px-4 py-2 hover:bg-bgHover hover:text-cyan">Capitalize</button><button id="ctx-fix-typos" class="w-full text-left px-4 py-2 hover:bg-bgHover hover:text-cyan">Fix Typos</button><div class="border-t border-borderMain my-1"></div><button id="ctx-clear" class="w-full text-left px-4 py-2 text-red-500 hover:bg-bgHover">Clear</button></div>
+    <!-- Modal for Delete Confirmation -->
+    <div id="delete-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-bgSurface p-6 rounded-xl shadow-2xl w-[24rem] transform transition-transform duration-200 border border-borderMain text-textMain">
+            <h3 class="text-xl font-black mb-2 tracking-tight text-red-500">Delete Task</h3>
+            <p class="text-sm text-textMuted mb-6">Are you sure you want to delete this task? This action cannot be undone.</p>
+            
+            <div class="flex justify-end gap-3 pt-4 border-t border-borderMain">
+                <button id="cancel-delete-btn" class="px-5 py-2 text-textMuted font-bold hover:bg-bgHover rounded transition-colors text-sm border border-borderMain">Cancel</button>
+                <button id="confirm-delete-btn" class="px-6 py-2 bg-red-500 text-white font-black uppercase tracking-wider rounded shadow-md hover:bg-red-600 hover:shadow-red-500/30 transition-all transform hover:scale-105 active:scale-95 text-sm">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Rollover Choice -->
+    <div id="rollover-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-bgSurface p-6 rounded-xl shadow-2xl w-[28rem] transform transition-transform duration-200 border border-borderMain text-textMain">
+            <h3 class="text-xl font-black mb-2 tracking-tight">Rollover Unfinished Tasks</h3>
+            <p class="text-sm text-textMuted mb-6">How would you like to handle your unfinished tasks for the current week?</p>
+            
+            <div class="flex flex-col gap-3 mb-6">
+                <button id="btn-move-tasks" class="w-full text-left p-4 rounded-lg border border-borderMain hover:border-cyan hover:bg-cyan/5 transition-all group shadow-sm">
+                    <div class="font-bold text-textMain group-hover:text-cyan text-lg">Move to Next Week</div>
+                    <div class="text-xs text-textMuted mt-1">Transfers unfinished tasks to next week and removes them from this week.</div>
+                </button>
+                <button id="btn-copy-tasks" class="w-full text-left p-4 rounded-lg border border-borderMain hover:border-cyan hover:bg-cyan/5 transition-all group shadow-sm">
+                    <div class="font-bold text-textMain group-hover:text-cyan text-lg">Copy to Next Week</div>
+                    <div class="text-xs text-textMuted mt-1">Duplicates unfinished tasks to next week, keeping the originals here.</div>
+                </button>
+            </div>
+
+            <div class="flex justify-end pt-4 border-t border-borderMain">
+                <button id="cancel-rollover-btn" class="px-5 py-2 text-textMuted font-bold hover:bg-bgHover rounded transition-colors text-sm border border-borderMain">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Manual Export (Save As) -->
+    <div id="export-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="bg-bgSurface p-6 rounded-xl shadow-2xl w-[28rem] transform transition-transform duration-200 border border-borderMain text-textMain">
+            <h3 class="text-xl font-black mb-2 tracking-tight">Save Backup To Computer</h3>
+            <p class="text-sm text-textMuted mb-6">Your web browser limits our ability to force a folder selector when running offline. Please <strong class="text-cyan">Right-Click</strong> the button below and select <strong class="text-cyan">"Save Link As..."</strong> to pick exactly where to save your file on your computer.</p>
+            
+            <div class="flex flex-col gap-3 mb-6">
+                <a id="manual-download-link" href="#" download="pats-todo-backup.json" class="w-full text-center p-4 rounded-lg border-2 border-dashed border-cyan hover:bg-cyan/10 transition-all group shadow-sm block">
+                    <div class="font-bold text-textMain group-hover:text-cyan text-lg pointer-events-none">Right-Click Here &rarr; Save Link As...</div>
+                </a>
+            </div>
+
+            <div class="flex justify-end pt-4 border-t border-borderMain">
+                <button id="cancel-export-btn" class="px-5 py-2 text-textMuted font-bold hover:bg-bgHover rounded transition-colors text-sm border border-borderMain">Close Window</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Smart Context Menu -->
+    <div id="custom-context-menu" class="hidden absolute z-[100] bg-bgSurface border border-borderMain rounded-lg shadow-2xl py-1 w-48 text-sm text-textMain flex flex-col overflow-hidden backdrop-blur-md">
+        <button id="ctx-capitalize" class="px-4 py-2 text-left hover:bg-bgHover hover:text-cyan transition-colors flex items-center gap-2">
+            <span class="font-serif font-bold text-xs bg-bgMain border border-borderMain rounded px-1">Aa</span> Capitalize First
+        </button>
+        <button id="ctx-fix-typos" class="px-4 py-2 text-left hover:bg-bgHover hover:text-cyan transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4 text-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg> Fix Common Typos
+        </button>
+        <div class="border-t border-borderMain my-1"></div>
+        <button id="ctx-clear" class="px-4 py-2 text-left hover:bg-red-500/20 text-red-500 transition-colors flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> Clear Input
+        </button>
+    </div>
+
+    <!-- Toast Notifications -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <script type="module">
         import { db } from './src/firebase.js';
         import { doc, onSnapshot, setDoc } from "firebase/firestore";
 
-        // CONFIG
-        const icons = { pin: '📌', trash: '🗑️', check: '✅', uncheck: '⭕' };
+        // --- DATA & CONFIG ---
+        const icons = {
+            pin: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>`,
+            check: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`,
+            uncheck: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke-width="2"></circle></svg>`,
+            trash: `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>`
+        };
+
         let audioCtx = null;
-        function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if(audioCtx.state === 'suspended') audioCtx.resume(); }
-        const COLORS = [ {hex:null}, {hex:'#000000'}, {hex:'#FF69B4'}, {hex:'#FF1493'}, {hex:'#FF007F'}, {hex:'#FF7F50'}, {hex:'#FFD700'}, {hex:'#32CD32'}, {hex:'#00FFFF'}, {hex:'#00BFFF'}, {hex:'#9D00FF'}, {hex:'#FFFFFF'} ];
-        const EMOJIS = { 'Status': ['none', '❌', '✅', '🚩', '🔥', '⭐'], 'Faces': ['none', '😀', '😎', '🤯', '🤠', '👻'], 'Animals': ['none', '🐶', '🐱', '🐸', '🦄', '🦖'] };
-        function formatLocalDate(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
-        let state = { appName: "Pat's To-Do", themeValue: 12, soundEnabled: false, soundPack: 'party', currentDate: formatLocalDate(new Date()), backlog: [], library: [], calendar: {} };
+        function initAudio() {
+            if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+            if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+        }
+
+        const COLORS = [
+            { name: 'None', hex: null }, { name: 'Pitch Black', hex: '#000000' }, { name: 'Bubblegum Pink', hex: '#FF69B4' },
+            { name: 'Hot Pink', hex: '#FF1493' }, { name: 'Rose', hex: '#FF007F' }, { name: 'Coral', hex: '#FF7F50' },
+            { name: 'Peach', hex: '#FFDAB9' }, { name: 'Tangerine', hex: '#FF8C00' }, { name: 'Gold', hex: '#FFD700' },
+            { name: 'Lemon', hex: '#FFFACD' }, { name: 'Mint Green', hex: '#98FF98' }, { name: 'Lime', hex: '#32CD32' },
+            { name: 'Emerald', hex: '#50C878' }, { name: 'Teal', hex: '#008080' }, { name: 'Cyan', hex: '#00FFFF' },
+            { name: 'Sky Blue', hex: '#87CEEB' }, { name: 'Ocean Blue', hex: '#00BFFF' }, { name: 'Periwinkle', hex: '#CCCCFF' },
+            { name: 'Lavender', hex: '#E6E6FA' }, { name: 'Lilac', hex: '#C8A2C8' }, { name: 'Electric Purple', hex: '#BF00FF' },
+            { name: 'Deep Purple', hex: '#9400D3' }, { name: 'Magenta', hex: '#FF00FF' }, { name: 'Bright White', hex: '#FFFFFF' },
+            { name: 'Silver', hex: '#C0C0C0' }, { name: 'Slate', hex: '#708090' }
+        ];
+        
+        const EMOJIS = {
+            'Status': ['none', '❌', '✅', '🚩', '🏳️', '🏴', '🚨', '⚠️', '🔥', '❗', '‼️', '🆘', '⭐', '🌟', '💫', '❇️', '🔱', '💠', '📅', '🗓️', '🕰️', '⏰', '⏳', '🤝', '💼', '💊', '💉', '🩺', '🩹', '🏥', '🧬', '🩸'],
+            'Faces': ['none', '😀', '🥰', '😎', '🥳', '🤯', '🤠', '🫠', '🫡', '😴', '🤧', '🤡', '👽', '👻', '🤖'],
+            'Animals': ['none', '🐶', '🐱', '🦊', '🐸', '🐰', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐵', '🦄', '🐙', '🦑', '🦕', '🦖', '🐛', '🦋', '🐞', '🐝'],
+            'Food': ['none', '🍕', '🍔', '🍟', '🌭', '🥓', '🍣', '🍱', '🧋', '☕', '🍵', '🍩', '🍓', '🍑', '🍒', '🍎', '🍉', '🍌', '🥑', '🥦', '🥕'],
+            'Activities': ['none', '🎨', '🎮', '🎧', '🎤', '📷', '🧘‍♀️', '🛀', '🛍️', '🎉', '🎈', '🎁', '🏋️‍♀️'],
+            'Travel': ['none', '🚗', '🚙', '🚕', '🚌', '🛻', '🚓', '🚑', '🚒', '🏎️', '🏍️', '🛵', '🚲', '🚀', '🛸', '🚁', '🛶', '🚢', '🚂', '✈️'],
+            'Objects': ['none', '📚', '💻', '📲', '📞', '☎️', '🖥️', '🖨️', '⌨️', '🖱️', '🖲️', '🕹️', '⌚', '📹', '🔋', '🔌', '💡', '🔦', '💰', '💎', '🔑', '🔒', '📩', '📌', '📎', '✂️', '🗑️', '🔨', '🔧', '⚙️', '⏰', '🎀', '💖', '🛒', '👑', '💍', '🕶️'],
+            'Nature': ['none', '🌙', '☀️', '⭐', '✨', '🔥', '💧', '🌸', '🌵', '🍄', '🌹', '🌺', '🌻', '🌼', '🌷', '🌱', '🪴', '🌲', '🌳', '🌴', '🍁', '🍂', '🍃', '🌈', '☁️', '❄️', '🌊', '⚡']
+        };
+
+        function formatLocalDate(date) { return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0'); }
+        let state = { appName: "Pat's To-Do List", themeValue: 12, soundEnabled: false, soundPack: 'party', currentDate: formatLocalDate(new Date()), backlog: [], library: [], calendar: {} };
         function generateId() { return Date.now().toString() + Math.random().toString(36).substr(2, 5); }
 
-        // SYNC
+        // --- FIREBASE SYNC START ---
         const docRef = doc(db, "apps", "pats-data-v3-5");
-        async function saveState() { try { await setDoc(docRef, state); } catch(e){ console.log(e); } }
+        async function saveState() { try { await setDoc(docRef, state); } catch(e){ console.error("Sync Error", e); } }
         function loadState() {
             onSnapshot(docRef, (snap) => {
                 if(snap.exists()) {
                     state = { ...state, ...snap.data() };
-                    if(!state.calendar) state.calendar = {};
                     if(!Array.isArray(state.backlog)) state.backlog = [];
-                    updateTheme(state.themeValue || 12);
-                    document.getElementById('theme-slider').value = state.themeValue || 12;
+                    if(!Array.isArray(state.library)) state.library = [];
+                    if(!state.calendar) state.calendar = {};
+                    if(state.themeValue === undefined) state.themeValue = 12;
+                    updateTheme(state.themeValue);
+                    const sl = document.getElementById('theme-slider'); if(sl) sl.value = state.themeValue;
                     document.getElementById('app-title').textContent = state.appName;
                     renderAll();
                 } else saveState();
             });
         }
+        // --- FIREBASE SYNC END ---
 
-        document.addEventListener('DOMContentLoaded', () => { 
-            setupEventListeners(); 
-            setupSettings(); 
-            setupMobileTabs();
-            loadState(); 
-        });
-
+        document.addEventListener('DOMContentLoaded', () => { setupTitleEdit(); setupEventListeners(); setupSettings(); loadState(); });
         let isPinActive = false;
 
-        function setupMobileTabs() {
-            const btnBacklog = document.getElementById('tab-backlog');
-            const btnLibrary = document.getElementById('tab-library');
-            const contBacklog = document.getElementById('mobile-backlog-container');
-            const contLibrary = document.getElementById('mobile-library-container');
-
-            // On mobile, default to backlog
-            btnBacklog.onclick = () => {
-                contBacklog.classList.remove('hidden');
-                contLibrary.classList.add('hidden');
-                contLibrary.classList.remove('flex');
-                btnBacklog.classList.add('text-cyan', 'bg-bgMain', 'border-r');
-                btnBacklog.classList.remove('text-textMuted', 'bg-bgSurface');
-                btnLibrary.classList.remove('text-cyan', 'bg-bgMain', 'border-l');
-                btnLibrary.classList.add('text-textMuted', 'bg-bgSurface');
-                isPinActive = false;
-            };
-
-            btnLibrary.onclick = () => {
-                contBacklog.classList.add('hidden');
-                contLibrary.classList.remove('hidden');
-                contLibrary.classList.add('flex');
-                btnLibrary.classList.add('text-cyan', 'bg-bgMain', 'border-l');
-                btnLibrary.classList.remove('text-textMuted', 'bg-bgSurface');
-                btnBacklog.classList.remove('text-cyan', 'bg-bgMain', 'border-r');
-                btnBacklog.classList.add('text-textMuted', 'bg-bgSurface');
-                isPinActive = true;
-            };
-        }
-
         function setupEventListeners() {
+            setupContextMenu();
             document.getElementById('add-task-btn').onclick = addTask;
-            document.getElementById('theme-slider').addEventListener('input', (e) => updateTheme(e.target.value));
-            document.getElementById('theme-slider').addEventListener('change', (e) => { state.themeValue = e.target.value; saveState(); });
-            
+            document.getElementById('new-task-text').addEventListener('keypress', (e) => { if (e.key === 'Enter') addTask(); });
+            const slider = document.getElementById('theme-slider');
+            slider.addEventListener('input', (e) => updateTheme(e.target.value));
+            slider.addEventListener('change', (e) => { state.themeValue = e.target.value; saveState(); });
             document.addEventListener('dblclick', (e) => {
                 const el = e.target.closest('.task-item');
-                if (el) openEditor(el.getAttribute('data-id'), el.getAttribute('data-zone'), el.getAttribute('data-date'));
+                if (el) { e.stopPropagation(); window.getSelection().removeAllRanges(); openEditor(el.getAttribute('data-id'), el.getAttribute('data-zone'), el.getAttribute('data-date')); }
             });
-
-            // Nav
             document.getElementById('prev-week').onclick = () => shiftWeek(-1);
             document.getElementById('next-week').onclick = () => shiftWeek(1);
             document.getElementById('today-btn').onclick = () => { state.currentDate = formatLocalDate(new Date()); saveState(); };
             document.getElementById('date-picker').addEventListener('change', (e) => { if(e.target.value) { state.currentDate = e.target.value; saveState(); } });
-
-            // Editor
+            
             document.getElementById('cancel-edit-btn').onclick = closeEditor;
             document.getElementById('save-edit-btn').onclick = saveEdit;
             document.getElementById('delete-edit-btn').onclick = deleteFromEditor;
             document.getElementById('cancel-delete-btn').onclick = cancelDelete;
             document.getElementById('confirm-delete-btn').onclick = confirmDelete;
             
-            // Emoji
+            // Emoji Fixes
             document.getElementById('edit-emoji-backspace').onclick = (e) => { e.preventDefault(); if(editingContext && editingContext.tempEmoji && editingContext.tempEmoji !== 'none') { const c = Array.from(editingContext.tempEmoji); c.pop(); editingContext.tempEmoji = c.length > 0 ? c.join('') : 'none'; renderEditorPickers(editingContext.tempColor, editingContext.tempEmoji, editingContext.activeEmojiCategory); }};
             document.getElementById('edit-emoji-clear').onclick = (e) => { e.preventDefault(); if(editingContext) { editingContext.tempEmoji = 'none'; renderEditorPickers(editingContext.tempColor, 'none', editingContext.activeEmojiCategory); }};
             document.getElementById('edit-emoji-done').onclick = (e) => { e.preventDefault(); saveEdit(); };
 
-            // Modals
             document.getElementById('rollover-btn').onclick = () => document.getElementById('rollover-modal').classList.remove('hidden');
             document.getElementById('cancel-rollover-btn').onclick = () => document.getElementById('rollover-modal').classList.add('hidden');
             document.getElementById('btn-move-tasks').onclick = () => rollOverTasks('move');
             document.getElementById('btn-copy-tasks').onclick = () => rollOverTasks('copy');
-            
-            // Backup
-            const expBtn = document.getElementById('export-btn'); if(expBtn) expBtn.onclick = exportData;
+            document.getElementById('export-btn').onclick = exportData;
             document.getElementById('cancel-export-btn').onclick = () => document.getElementById('export-modal').classList.add('hidden');
-            const impFile = document.getElementById('import-file'); if(impFile) impFile.addEventListener('change', importData);
+            document.getElementById('import-file').addEventListener('change', importData);
         }
 
-        // --- SOUND ENGINE (RESTORED) ---
+        // --- FULL SOUND ENGINE RESTORED ---
         function playSynthesizedSound(type) {
-            initAudio(); if (!state.soundEnabled) return;
+            if(!state.soundEnabled) return;
             try {
+                initAudio();
                 const t = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination);
-                if (type === 'party') { osc.frequency.setValueAtTime(523, t); osc.frequency.setValueAtTime(659, t+0.1); osc.frequency.setValueAtTime(783, t+0.2); gain.gain.setValueAtTime(0.2, t); gain.gain.exponentialRampToValueAtTime(0.01, t+0.5); osc.start(t); osc.stop(t+0.5); }
-                else if (type === 'coin') { osc.type='square'; osc.frequency.setValueAtTime(987, t); osc.frequency.setValueAtTime(1318, t+0.1); gain.gain.setValueAtTime(0.1, t); gain.gain.exponentialRampToValueAtTime(0.01, t+0.4); osc.start(t); osc.stop(t+0.4); }
-                else { osc.frequency.setValueAtTime(400, t); gain.gain.setValueAtTime(0.1, t); gain.gain.exponentialRampToValueAtTime(0.01, t+0.2); osc.start(t); osc.stop(t+0.2); }
-            } catch(e){}
+                
+                if (type === 'party') { osc.type='sine'; osc.frequency.setValueAtTime(523,t); osc.frequency.setValueAtTime(659,t+0.08); osc.frequency.setValueAtTime(783,t+0.16); osc.frequency.setValueAtTime(1046,t+0.24); gain.gain.setValueAtTime(0,t); gain.gain.linearRampToValueAtTime(0.3,t+0.05); gain.gain.setValueAtTime(0.3,t+0.24); gain.gain.exponentialRampToValueAtTime(0.01,t+0.6); osc.start(t); osc.stop(t+0.6); }
+                else if (type === 'levelup') { osc.type='square'; osc.frequency.setValueAtTime(261,t); osc.frequency.setValueAtTime(329,t+0.15); osc.frequency.setValueAtTime(392,t+0.3); osc.frequency.setValueAtTime(523,t+0.45); gain.gain.setValueAtTime(0,t); gain.gain.linearRampToValueAtTime(0.15,t+0.05); gain.gain.setValueAtTime(0.15,t+0.6); gain.gain.exponentialRampToValueAtTime(0.01,t+1.2); osc.start(t); osc.stop(t+1.2); }
+                else if (type === 'fanfare') { osc.type='square'; osc.frequency.setValueAtTime(392,t); osc.frequency.setValueAtTime(523,t+0.15); osc.frequency.setValueAtTime(659,t+0.3); gain.gain.setValueAtTime(0.2,t); gain.gain.exponentialRampToValueAtTime(0.01,t+0.6); osc.start(t); osc.stop(t+0.6); }
+                else if (type === 'coin') { osc.type='square'; osc.frequency.setValueAtTime(987,t); osc.frequency.setValueAtTime(1318,t+0.08); gain.gain.setValueAtTime(0,t); gain.gain.linearRampToValueAtTime(0.1,t+0.02); gain.gain.exponentialRampToValueAtTime(0.01,t+0.5); osc.start(t); osc.stop(t+0.5); }
+                else if (type === 'magic') { osc.type='sine'; [880,1046,1318,1568,1760,2093].forEach((f,i)=>osc.frequency.setValueAtTime(f,t+i*0.05)); gain.gain.setValueAtTime(0,t); gain.gain.linearRampToValueAtTime(0.2,t+0.05); gain.gain.exponentialRampToValueAtTime(0.01,t+0.4); osc.start(t); osc.stop(t+0.4); }
+                else if (type === 'tada') { osc.type='square'; osc.frequency.setValueAtTime(392,t); osc.frequency.setValueAtTime(523,t+0.15); gain.gain.setValueAtTime(0,t); gain.gain.linearRampToValueAtTime(0.15,t+0.02); gain.gain.exponentialRampToValueAtTime(0.01,t+0.8); osc.start(t); osc.stop(t+0.8); }
+                else if (type === 'champagne' || type === 'cheer') { osc.type='sawtooth'; osc.frequency.setValueAtTime(100,t); osc.frequency.linearRampToValueAtTime(800,t+0.1); gain.gain.setValueAtTime(0.1,t); gain.gain.exponentialRampToValueAtTime(0.01,t+0.5); osc.start(t); osc.stop(t+0.5); }
+            } catch(e) {}
         }
 
         function updateTheme(val) {
-            const r = document.documentElement; 
-            r.style.setProperty('--bg-main', `hsl(0, 0%, ${val}%)`);
+            const r = document.documentElement; r.style.setProperty('--bg-main', `hsl(0, 0%, ${val}%)`);
             r.style.setProperty('--bg-surface', `hsl(0, 0%, ${Math.max(0, val<50?Number(val)+6:Number(val)-3)}%)`);
             r.style.setProperty('--bg-hover', `hsl(0, 0%, ${Math.max(0, val<50?Number(val)+12:Number(val)-8)}%)`);
             r.style.setProperty('--border-main', `hsl(0, 0%, ${Math.max(0, val<50?Number(val)+15:Number(val)-15)}%)`);
             if(val<50){r.style.setProperty('--text-main',`hsl(0,0%,95%)`);r.style.setProperty('--text-muted',`hsl(0,0%,65%)`);}
             else{r.style.setProperty('--text-main',`hsl(0,0%,10%)`);r.style.setProperty('--text-muted',`hsl(0,0%,40%)`);}
         }
-
         function setupTitleEdit() {
             const t = document.getElementById('app-title');
-            t.ondblclick = () => { t.contentEditable = "true"; t.focus(); };
-            t.onblur = () => { t.contentEditable = "false"; if(t.textContent!==state.appName){state.appName=t.textContent;saveState();} };
+            t.ondblclick = () => { t.contentEditable = "true"; t.classList.add('ring-2','ring-cyan'); t.focus(); document.execCommand('selectAll', false, null); };
+            t.onblur = () => { t.contentEditable = "false"; t.classList.remove('ring-2','ring-cyan'); if(t.textContent!==state.appName){state.appName=t.textContent;saveState();} };
+            t.onkeydown = (e) => { if(e.key==='Enter'){e.preventDefault();t.blur();} };
         }
-
+        function capitalizeFirstLetter(s){ return s ? s.charAt(0).toUpperCase()+s.slice(1) : s; }
+        const typoMap = {'teh':'the','dont':"don't",'im':"I'm",'ive':"I've"};
+        function fixTypos(t){ let n=t; for(const[k,v]of Object.entries(typoMap)){ n=n.replace(new RegExp(`\\b${k}\\b`,'gi'),v); } return n; }
+        
+        let activeInputField = null;
+        function setupContextMenu() {
+            const m=document.getElementById('custom-context-menu');
+            [document.getElementById('new-task-text'),document.getElementById('edit-text')].forEach(i=>{
+                i.oncontextmenu=(e)=>{ e.preventDefault(); activeInputField=i; m.style.left=`${e.pageX}px`; m.style.top=`${e.pageY}px`; m.classList.remove('hidden'); };
+            });
+            document.onclick=(e)=>{if(!m.contains(e.target))m.classList.add('hidden');};
+            document.getElementById('ctx-clear').onclick=()=>{if(activeInputField)activeInputField.value='';m.classList.add('hidden');};
+            document.getElementById('ctx-capitalize').onclick=()=>{if(activeInputField)activeInputField.value=capitalizeFirstLetter(activeInputField.value);m.classList.add('hidden');};
+            document.getElementById('ctx-fix-typos').onclick=()=>{if(activeInputField)activeInputField.value=fixTypos(activeInputField.value);m.classList.add('hidden');};
+        }
         function addTask() {
             const i=document.getElementById('new-task-text'); let t=i.value.trim(); if(!t)return;
-            t = t.charAt(0).toUpperCase() + t.slice(1);
-            const n={id:generateId(),text:t,color:null,emoji:'none',style:'dot',isPinned:isPinActive,isCompleted:false};
-            if(isPinActive) state.library.push(n); else state.backlog.push(n);
+            t=capitalizeFirstLetter(t); const n={id:generateId(),text:t,color:null,emoji:'none',style:'dot',isPinned:isPinActive,isCompleted:false};
+            if(isPinActive){const x=state.library.some(o=>o.text.toLowerCase()===t.toLowerCase()); if(!x)state.library.push(n);} else state.backlog.push(n);
             i.value=''; saveState(); renderAll();
         }
-
-        function renderAll() {
-            renderSidebar(); renderCalendar(); setupDragAndDrop();
-        }
-
+        function renderAll() { renderSidebar(); renderCalendar(); setupDragAndDrop(); }
         function renderSidebar() {
-            const b=document.getElementById('backlog-list'); b.innerHTML='';
+            const b=document.getElementById('backlog-list'); const l=document.getElementById('library-list'); b.innerHTML=''; l.innerHTML='';
             state.backlog.sort((a,b)=>a.isCompleted-b.isCompleted).forEach(t=>b.appendChild(createTaskElement(t,'backlog')));
-            
-            const l=document.getElementById('library-list'); l.innerHTML='';
             state.library.sort((a,b)=>a.isCompleted-b.isCompleted).forEach(t=>l.appendChild(createTaskElement(t,'library')));
         }
-
         function createTaskElement(task,zone,dateString=null) {
-            const el=document.createElement('div'); 
-            el.className=`task-item task-card flex flex-col p-2.5 rounded-md bg-bgSurface border border-borderMain shadow-sm relative group select-none mb-2 ${task.isCompleted?'opacity-50':''}`;
+            const el=document.createElement('div'); el.className=`task-item task-card flex flex-col p-2.5 rounded-md bg-bgSurface border border-borderMain shadow-sm relative group select-none ${task.isCompleted?'opacity-50':''}`;
             el.draggable=true; el.id=`task-${task.id}`; el.setAttribute('data-id',task.id); el.setAttribute('data-zone',zone); if(dateString)el.setAttribute('data-date',dateString);
-            if(task.color) { 
-                el.style.setProperty('--task-color',task.color); el.style.setProperty('--task-color-alpha',task.color+'33'); 
-                if(task.style) el.classList.add(`style-${task.style}`);
-            }
-            el.ondragstart=(e)=>{ const d=JSON.stringify({id:task.id,zone,date:dateString}); e.dataTransfer.setData('text/plain',d); setTimeout(()=>el.style.opacity='0.4',0); el.classList.add('is-dragging'); };
+            if(task.color){ el.style.setProperty('--task-color',task.color); el.style.setProperty('--task-color-alpha',task.color+'33'); 
+            if(task.style==='border')el.classList.add('style-border'); if(task.style==='highlighter')el.classList.add('style-highlighter'); if(task.style==='glow')el.classList.add('style-glow'); if(task.style==='gradient')el.classList.add('style-gradient'); if(task.style==='retro')el.classList.add('style-retro'); }
+            el.ondragstart=(e)=>{ const d=JSON.stringify({id:task.id,zone,date:dateString}); e.dataTransfer.setData('text/plain',d); e.dataTransfer.effectAllowed='copyMove'; setTimeout(()=>el.style.opacity='0.4',0); el.classList.add('is-dragging'); };
             el.ondragend=()=>{ el.style.opacity=task.isCompleted?'0.5':'1'; el.classList.remove('is-dragging'); renderAll(); };
-            
-            let emojiHtml = task.emoji && task.emoji !== 'none' ? `<span class="text-lg mr-1">${task.emoji}</span>` : '';
-            let dotHtml = task.style==='dot'&&task.color ? `<span class="w-3 h-3 rounded-full border border-black/10 mr-2 shrink-0" style="background-color:${task.color}"></span>` : '';
-            
-            el.innerHTML = `
-                <div class="flex items-start w-full relative">
-                    <div class="flex items-center flex-1 min-w-0">
-                        ${dotHtml}
-                        <div class="text-sm font-semibold break-words leading-snug ${task.isCompleted?'line-through text-textMuted':'text-textMain'}">${emojiHtml}${task.text}</div>
-                    </div>
-                    <div class="absolute -top-1 -right-1 hidden group-hover:flex items-center gap-1 bg-bgSurface p-1 rounded border border-borderMain shadow-md">
-                        <button class="delete-btn p-1 text-red-500 hover:bg-red-500/20 rounded">🗑️</button>
-                        <button class="check-btn p-1 ${task.isCompleted?'text-lime':'text-textMuted'} hover:text-lime rounded">${task.isCompleted?'✅':'⭕'}</button>
-                    </div>
-                </div>`;
-            
-            // Re-attach listeners manually to avoid innerHTML issues
-            el.querySelector('.delete-btn').onclick=(e)=>{e.stopPropagation();requestDelete(task.id,zone,dateString);};
-            el.querySelector('.check-btn').onclick=(e)=>{e.stopPropagation();toggleComplete(task.id,zone,dateString,e);};
-            
-            // Mobile tap to complete? No, sticking to PC behavior (dblclick to edit)
-            return el;
+            el.innerHTML=`<div class="flex items-start gap-1.5 w-full relative"><div class="flex items-start gap-2 flex-1 min-w-0 w-full">${task.style==='dot'&&task.color?`<span class="w-3 h-3 rounded-full flex-shrink-0 shadow-sm border border-black/10 mt-1" style="background-color:${task.color}"></span>`:''} <div class="text-sm font-semibold break-words whitespace-normal leading-snug flex-1 min-w-0 ${task.isCompleted?'line-through text-textMuted':'text-textMain'}">${task.emoji&&task.emoji!=='none'?`<span class="text-lg drop-shadow-sm mr-1.5 break-all inline">${task.emoji}</span>`:''}${task.text}</div></div></div>`;
+            const rp=document.createElement('div'); rp.className='absolute -top-1 -right-1 hidden group-hover:flex items-center gap-0.5 bg-bgSurface/95 backdrop-blur-md p-1 rounded-lg shadow-md border border-borderMain z-20';
+            const tb=document.createElement('button'); tb.innerHTML=icons.trash; tb.className='p-1.5 text-red-500 hover:bg-red-500/20 rounded transition-colors'; tb.onclick=(e)=>{e.stopPropagation();requestDelete(task.id,zone,dateString);};
+            const cb=document.createElement('button'); cb.innerHTML=task.isCompleted?icons.check:icons.uncheck; cb.className=`p-1.5 rounded transition-colors hover:bg-bgHover ${task.isCompleted?'text-lime':'text-textMuted hover:text-lime'}`; cb.onclick=(e)=>{e.stopPropagation();toggleComplete(task.id,zone,dateString,e);};
+            rp.appendChild(tb); rp.appendChild(cb); el.appendChild(rp); return el;
         }
-
         function getStartOfWeek(d){ let x=typeof d==='string'?new Date(d.split('-')[0],d.split('-')[1]-1,d.split('-')[2]):new Date(d); x.setDate(x.getDate()-x.getDay()); x.setHours(0,0,0,0); return x; }
-        function shiftWeek(o){ let d=new Date(state.currentDate); d.setDate(d.getDate()+(o*7)); state.currentDate=formatLocalDate(d); saveState(); }
-        
+        function shiftWeek(o){ let d=typeof state.currentDate==='string'?new Date(state.currentDate.split('-')[0],state.currentDate.split('-')[1]-1,state.currentDate.split('-')[2]):new Date(state.currentDate); d.setDate(d.getDate()+(o*7)); state.currentDate=formatLocalDate(d); saveState(); renderAll(); }
         function renderCalendar() {
-            const g=document.getElementById('calendar-grid'); g.innerHTML=''; 
-            const s=getStartOfWeek(state.currentDate); 
-            const ts=formatLocalDate(new Date());
-            const dn=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-            
-            let tot=0,com=0; 
-            for(let i=0;i<7;i++){
-                const c=new Date(s); c.setDate(c.getDate()+i); const ds=formatLocalDate(c); 
-                const col=document.createElement('div'); col.className='flex flex-col h-full border-r border-borderMain last:border-r-0 min-h-0';
-                
-                col.innerHTML=`<div class="p-2 text-center border-b border-borderMain bg-bgSurface ${ds===ts?'shadow-[inset_0_-3px_0_0_#00FFFF]':''}"><div class="text-[10px] font-black uppercase ${ds===ts?'text-cyan':'text-textMuted'}">${dn[i]}</div><div class="text-sm font-bold ${ds===ts?'text-cyan':''}">${c.getMonth()+1}/${c.getDate()}</div></div>`;
-                const dz=document.createElement('div'); dz.className='flex-1 p-2 overflow-y-auto custom-scroll space-y-2 drag-container bg-bgMain'; dz.setAttribute('data-zone','calendar'); dz.setAttribute('data-date',ds);
-                
-                const t=state.calendar[ds]||[]; tot+=t.length; com+=t.filter(x=>x.isCompleted).length; 
-                t.sort((a,b)=>a.isCompleted-b.isCompleted).forEach(x=>dz.appendChild(createTaskElement(x,'calendar',ds))); 
-                col.appendChild(dz); g.appendChild(col);
+            const g=document.getElementById('calendar-grid'); g.innerHTML=''; const s=getStartOfWeek(state.currentDate); const dn=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]; const mn=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; const ts=formatLocalDate(new Date());
+            let tot=0,com=0; for(let i=0;i<7;i++){
+                const c=new Date(s); c.setDate(c.getDate()+i); const ds=formatLocalDate(c); const col=document.createElement('div'); col.className='flex flex-col h-full border-r border-borderMain last:border-r-0 min-h-0';
+                col.innerHTML=`<div class="p-3 text-center border-b border-borderMain bg-bgSurface ${ds===ts?'shadow-[inset_0_-3px_0_0_#00FFFF]':''}"><div class="text-xs font-black uppercase tracking-wider ${ds===ts?'text-cyan':'text-textMuted'}">${dn[i]}</div><div class="text-lg font-bold ${ds===ts?'text-cyan':''}">${mn[c.getMonth()]} ${c.getDate()}</div></div>`;
+                const dz=document.createElement('div'); dz.className='flex-1 p-3 overflow-y-auto custom-scroll space-y-2 drag-container transition-colors min-h-0 bg-bgMain'; dz.setAttribute('data-zone','calendar'); dz.setAttribute('data-date',ds);
+                const t=state.calendar[ds]||[]; tot+=t.length; com+=t.filter(x=>x.isCompleted).length; t.sort((a,b)=>a.isCompleted-b.isCompleted).forEach(x=>dz.appendChild(createTaskElement(x,'calendar',ds))); col.appendChild(dz); g.appendChild(col);
             }
+            const e=new Date(s); e.setDate(e.getDate()+6); document.getElementById('week-label').textContent=`Week of ${mn[s.getMonth()]} ${s.getDate()} - ${mn[e.getMonth()]} ${e.getDate()}`;
             document.getElementById('weekly-progress').style.width=tot===0?'0%':`${(com/tot)*100}%`;
-            
-            const e=new Date(s); e.setDate(e.getDate()+6);
-            document.getElementById('week-label').textContent = `${s.getMonth()+1}/${s.getDate()} - ${e.getMonth()+1}/${e.getDate()}`;
         }
-
         function setupDragAndDrop() {
             document.querySelectorAll('.drag-container').forEach(z=>{
-                z.ondragover=(e)=>{e.preventDefault(); z.classList.add('drag-over');};
-                z.ondragleave=(e)=>{z.classList.remove('drag-over');};
+                z.ondragover=(e)=>{e.preventDefault(); e.dataTransfer.dropEffect='move'; z.classList.add('drag-over'); 
+                    const cur=document.querySelector('.is-dragging'); const aft=getDragAfterElement(z,e.clientY); if(cur){if(aft==null)z.appendChild(cur);else z.insertBefore(cur,aft);}};
+                z.ondragleave=(e)=>{if(!z.contains(e.relatedTarget))z.classList.remove('drag-over');};
                 z.ondrop=(e)=>{e.preventDefault(); z.classList.remove('drag-over'); const d=JSON.parse(e.dataTransfer.getData('text/plain')); handleDrop(d.id,d.zone,d.date,z.getAttribute('data-zone'),z.getAttribute('data-date'));};
             });
         }
-
-        function handleDrop(id,sz,sd,tz,td) {
-            const sl=getTaskList(sz,sd); const idx=sl.findIndex(t=>t.id===id); if(idx===-1)return; const t=sl[idx];
+        function getDragAfterElement(c,y){ return [...c.querySelectorAll('.task-item:not(.is-dragging)')].reduce((cl,ch)=>{const box=ch.getBoundingClientRect();const off=y-box.top-box.height/2;return(off<0&&off>cl.offset)?{offset:off,element:ch}:cl;},{offset:Number.NEGATIVE_INFINITY}).element; }
+        function handleDrop(id,sz,sd,tz,td,idx=-1) {
+            const sl=getTaskList(sz,sd); const ti=sl.findIndex(t=>t.id===id); if(ti===-1)return; const t=sl[ti];
             let clone=(sz==='library'&&tz==='calendar'); let mv=clone?{...t,id:generateId()}:t;
-            if(!clone)sl.splice(idx,1); if(tz==='library')mv.isPinned=true; else if(tz==='backlog')mv.isPinned=false;
-            getTaskList(tz,td,true).push(mv); saveState();
+            if(!clone)sl.splice(ti,1); if(tz==='library'){mv.isPinned=true;const ex=state.library.some(o=>o.text.toLowerCase()===mv.text.toLowerCase()&&o.id!==mv.id);if(ex&&!clone){saveState();renderAll();return;}} else if(tz==='backlog'){mv.isPinned=false;const ex=state.backlog.some(o=>o.text.toLowerCase()===mv.text.toLowerCase()&&o.id!==mv.id);if(ex&&!clone){saveState();renderAll();return;}}
+            const tl=getTaskList(tz,td,true); if(idx!==-1&&idx<=tl.length)tl.splice(idx,0,mv); else tl.push(mv); saveState(); renderAll();
         }
-
         function toggleComplete(id,z,d,e) {
-            let l=getTaskList(z,d); const t=l.find(x=>x.id===id); if(t){t.isCompleted=!t.isCompleted; if(t.isCompleted){if(state.soundEnabled)playSynthesizedSound(state.soundPack); if(typeof confetti!=='undefined')confetti({particleCount:100,spread:80,origin:{x:e?e.clientX/window.innerWidth:0.5,y:e?e.clientY/window.innerHeight:0.5}});} saveState();}
+            let l=getTaskList(z,d); const t=l.find(x=>x.id===id); if(t){t.isCompleted=!t.isCompleted; 
+            if(t.isCompleted){if(state.soundEnabled)playSynthesizedSound(state.soundPack); if(typeof confetti!=='undefined')confetti({particleCount:100,spread:80,origin:{x:e?e.clientX/window.innerWidth:0.5,y:e?e.clientY/window.innerHeight:0.5}});} 
+            saveState(); renderAll();}
         }
-
-        function deleteTask(id,z,d) { const l=getTaskList(z,d); const i=l.findIndex(x=>x.id===id); if(i!==-1){l.splice(i,1); saveState();} }
+        function deleteTask(id,z,d) { const l=getTaskList(z,d); const i=l.findIndex(x=>x.id===id); if(i!==-1){l.splice(i,1); saveState(); renderAll();} }
         function getTaskList(z,d,c=false) { if(z==='backlog')return state.backlog; if(z==='library')return state.library; if(z==='calendar'){if(c&&!state.calendar[d])state.calendar[d]=[]; return state.calendar[d]||[];} return []; }
-
-        // EDITOR
+        
         let editingContext=null;
+        function getCategoryForEmoji(s) { if(!s||s==='none')return 'Status'; const f=Array.from(s)[0]; for(const[k,v]of Object.entries(EMOJIS)){if(v.includes(f))return k;} return 'Status'; }
         function openEditor(id,z,d) {
             const t=getTaskList(z,d).find(x=>x.id===id); if(!t)return; editingContext={task:t,zone:z,dateString:d,tempEmoji:t.emoji||'none',tempColor:t.color};
-            document.getElementById('edit-text').value=t.text;
+            document.getElementById('edit-text').value=t.text; 
             document.getElementsByName('edit-style').forEach(r=>{r.checked=(r.value===(t.style||'dot'));});
-            renderEditorPickers(t.color,t.emoji); document.getElementById('edit-modal').classList.remove('hidden');
+            renderEditorPickers(t.color,t.emoji,getCategoryForEmoji(t.emoji)); document.getElementById('edit-modal').classList.remove('hidden'); setTimeout(()=>document.getElementById('edit-text').focus(),50);
         }
-        function renderEditorPickers(ac,ae) {
+        function renderEditorPickers(ac,ae,aec) {
             const cp=document.getElementById('edit-color-picker'); cp.innerHTML=''; 
-            COLORS.forEach(c=>{const b=document.createElement('button');b.className=`w-6 h-6 rounded-full border ${ac===c.hex?'ring-2 ring-cyan':''}`; if(c.hex)b.style.backgroundColor=c.hex;else b.textContent='🚫'; b.onclick=()=>renderEditorPickers(c.hex,editingContext.tempEmoji); cp.appendChild(b);});
+            COLORS.forEach(c=>{const b=document.createElement('button');b.className=`w-7 h-7 rounded-full mx-auto hover:scale-125 transition-transform border focus:outline-none shadow-sm ${ac===c.hex?'border-white border-2 scale-125 ring-2 ring-cyan':'border-borderMain'}`;if(c.hex)b.style.backgroundColor=c.hex;else {b.innerHTML='🚫';b.className+=' flex items-center justify-center text-[10px] bg-bgSurface';} b.onclick=(e)=>{e.preventDefault();renderEditorPickers(c.hex,editingContext.tempEmoji,aec);};cp.appendChild(b);});
             
             const et=document.getElementById('edit-emoji-tabs'); et.innerHTML=''; 
-            Object.keys(EMOJIS).forEach(c=>{const b=document.createElement('button');b.className='px-2 py-1 text-xs bg-bgMain rounded border border-borderMain';b.textContent=c;b.onclick=()=>{renderEmojiGrid(c);};et.appendChild(b);});
+            Object.keys(EMOJIS).forEach(c=>{const b=document.createElement('button');b.className=`px-3 py-1 text-xs rounded-md transition-colors whitespace-nowrap focus:outline-none shadow-sm ${aec===c?'bg-cyan text-black font-bold':'bg-bgSurface text-textMuted hover:bg-bgHover'}`;b.textContent=c;b.onclick=(e)=>{e.preventDefault();renderEditorPickers(editingContext.tempColor,editingContext.tempEmoji,c);};et.appendChild(b);});
             
-            renderEmojiGrid('Faces'); // Default
-            editingContext.tempColor=ac; editingContext.tempEmoji=ae;
-            document.getElementById('edit-emoji-preview').textContent=ae||'none';
-        }
-        function renderEmojiGrid(cat) {
             const eg=document.getElementById('edit-emoji-grid'); eg.innerHTML=''; 
-            EMOJIS[cat].forEach(e=>{const b=document.createElement('button');b.className='text-xl p-1 hover:bg-bgHover rounded';b.textContent=e==='none'?'🚫':e;b.onclick=()=>{ if(e==='none')editingContext.tempEmoji='none'; else {if(!editingContext.tempEmoji||editingContext.tempEmoji==='none')editingContext.tempEmoji=e; else editingContext.tempEmoji+=e;} renderEditorPickers(editingContext.tempColor,editingContext.tempEmoji); };eg.appendChild(b);});
+            EMOJIS[aec].forEach(e=>{const b=document.createElement('button');b.className='text-2xl rounded p-1 transition-colors focus:outline-none flex justify-center items-center hover:bg-bgHover active:scale-95';b.innerHTML=e==='none'?'<span class="text-sm">🚫</span>':e;
+                b.onclick=(ev)=>{ev.preventDefault(); if(e==='none')editingContext.tempEmoji='none'; else { if(!editingContext.tempEmoji||editingContext.tempEmoji==='none')editingContext.tempEmoji=e; else editingContext.tempEmoji+=e; } renderEditorPickers(editingContext.tempColor,editingContext.tempEmoji,aec);};eg.appendChild(b);});
+            
+            editingContext.tempColor=ac; editingContext.activeEmojiCategory=aec;
+            const ep=document.getElementById('edit-emoji-preview');
+            if(ep){ ep.innerHTML=''; if(ae&&ae!=='none'){const c=Array.from(ae);c.forEach((ch,i)=>{const s=document.createElement('span');s.textContent=ch;s.draggable=true;s.className='cursor-move hover:bg-white/10 rounded px-0.5 transition-colors inline-block';
+                s.ondragstart=(e)=>{e.dataTransfer.setData('text/plain',i);e.dataTransfer.effectAllowed='move';setTimeout(()=>s.style.opacity='0.5',0);}; s.ondragend=()=>{s.style.opacity='1';}; s.ondragover=(e)=>{e.preventDefault();e.dataTransfer.dropEffect='move';};
+                s.ondrop=(e)=>{e.preventDefault();const di=parseInt(e.dataTransfer.getData('text/plain'),10); if(di!==i&&!isNaN(di)){const nc=[...c];const[rm]=nc.splice(di,1);nc.splice(i,0,rm);editingContext.tempEmoji=nc.join('');renderEditorPickers(editingContext.tempColor,editingContext.tempEmoji,aec);}}; ep.appendChild(s);});} else ep.textContent='none';}
         }
 
         let pdc=null;
@@ -444,20 +599,13 @@
         function confirmDelete(){if(pdc)deleteTask(pdc.id,pdc.z,pdc.d);cancelDelete();}
         function cancelDelete(){pdc=null;document.getElementById('delete-modal').classList.add('hidden');}
         function deleteFromEditor(){if(editingContext)requestDelete(editingContext.task.id,editingContext.zone,editingContext.dateString);closeEditor();}
-        function saveEdit(){if(!editingContext)return;let t=document.getElementById('edit-text').value.trim();if(!t)return;let s='dot';document.getElementsByName('edit-style').forEach(r=>{if(r.checked)s=r.value;});editingContext.task.text=t;editingContext.task.style=s;editingContext.task.color=editingContext.tempColor;editingContext.task.emoji=editingContext.tempEmoji;saveState();closeEditor();}
+        function saveEdit(){if(!editingContext)return;let t=document.getElementById('edit-text').value.trim();if(!t)return;let s='dot';document.getElementsByName('edit-style').forEach(r=>{if(r.checked)s=r.value;});editingContext.task.text=capitalizeFirstLetter(t);editingContext.task.style=s;editingContext.task.color=editingContext.tempColor;editingContext.task.emoji=editingContext.tempEmoji;saveState();renderAll();closeEditor();}
         function closeEditor(){document.getElementById('edit-modal').classList.add('hidden');editingContext=null;}
-        function setupSettings(){
-            const sb=document.getElementById('settings-btn'); const sm=document.getElementById('settings-modal'); const cb=document.getElementById('close-settings-btn'); const ti=document.getElementById('settings-sound-toggle'); const ps=document.getElementById('settings-sound-pack');
-            sb.onclick=()=>{sm.classList.remove('hidden');ti.checked=state.soundEnabled;ps.value=state.soundPack;};
-            cb.onclick=()=>sm.classList.add('hidden');
-            ti.onchange=()=>{state.soundEnabled=ti.checked;saveState();};
-            ps.onchange=(e)=>{state.soundPack=e.target.value;saveState();};
-        }
-        function setupContextMenu(){} // Simplified for mobile
-        function rollOverTasks(m){document.getElementById('rollover-modal').classList.add('hidden');const s=getStartOfWeek(state.currentDate);let mc=0;for(let i=0;i<7;i++){const c=new Date(s);c.setDate(c.getDate()+i);const ds=formatLocalDate(c);const nd=new Date(c);nd.setDate(nd.getDate()+7);const nds=formatLocalDate(nd);if(state.calendar[ds]){const u=[],f=[];state.calendar[ds].forEach(t=>{if(!t.isCompleted){if(m==='copy'){u.push({...t,id:generateId()});f.push(t);}else u.push(t);mc++;}else f.push(t);});if(m==='move')state.calendar[ds]=f;if(u.length>0){if(!state.calendar[nds])state.calendar[nds]=[];state.calendar[nds].push(...u);}}}if(mc>0){saveState();renderAll();showToast(`${m==='move'?'Moved':'Copied'} ${mc} tasks.`);}else showToast('No tasks.');}
-        function showToast(m){const c=document.getElementById('toast-container');const t=document.createElement('div');t.className='bg-bgSurface border border-borderMain text-textMain px-4 py-3 rounded-md shadow-2xl flex items-center gap-3 font-medium text-sm';t.innerHTML=`<span class="w-3 h-3 rounded-full bg-cyan shadow-[0_0_8px_rgba(0,255,255,0.8)]"></span>${m}`;c.appendChild(t);setTimeout(()=>t.remove(),3000);}
-        async function exportData(){const d=JSON.stringify(state,null,2);const b=new Blob([d],{type:"application/json"});try{if(window.showSaveFilePicker&&window.location.protocol!=='file:'){const h=await window.showSaveFilePicker({suggestedName:'pats-backup.json',types:[{description:'JSON',accept:{'application/json':['.json']}}]});const w=await h.createWritable();await w.write(b);await w.close();showToast("Saved!");}else throw new Error('Fallback');}catch(e){if(e.name!=='AbortError'){document.getElementById('manual-download-link').href=URL.createObjectURL(b);document.getElementById('export-modal').classList.remove('hidden');}}}
-        function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=(ev)=>{try{state={...state,...JSON.parse(ev.target.result)};saveState();renderAll();showToast("Restored!");}catch(err){alert("Invalid file");}};r.readAsText(f);e.target.value='';}
+        function setupSettings(){const sb=document.getElementById('settings-btn');const sm=document.getElementById('settings-modal');const cb=document.getElementById('close-settings-btn');const ti=document.getElementById('settings-sound-toggle');const ps=document.getElementById('settings-sound-pack');function sui(){ti.checked=state.soundEnabled;ps.value=state.soundPack;const bg=document.getElementById('toggle-bg');const dot=document.getElementById('toggle-dot');if(state.soundEnabled){bg.classList.replace('bg-borderMain','bg-cyan');dot.classList.add('translate-x-4');}else{bg.classList.replace('bg-cyan','bg-borderMain');dot.classList.remove('translate-x-4');}}sb.onclick=()=>{sui();sm.classList.remove('hidden');};cb.onclick=()=>sm.classList.add('hidden');ti.onchange=()=>{state.soundEnabled=ti.checked;sui();saveState();};ps.onchange=(e)=>{state.soundPack=e.target.value;saveState();if(state.soundEnabled)playSynthesizedSound(state.soundPack);};}
+        function showToast(m){const c=document.getElementById('toast-container');const t=document.createElement('div');t.className='bg-bgSurface border border-borderMain text-textMain px-4 py-3 rounded-md shadow-2xl transform transition-all duration-300 translate-y-10 opacity-0 flex items-center gap-3 font-medium text-sm';t.innerHTML=`<span class="w-3 h-3 rounded-full bg-cyan shadow-[0_0_8px_rgba(0,255,255,0.8)]"></span>${m}`;c.appendChild(t);void t.offsetWidth;t.classList.remove('translate-y-10','opacity-0');setTimeout(()=>{t.classList.add('translate-y-10','opacity-0');setTimeout(()=>t.remove(),300);},3000);}
+        function rollOverTasks(m){document.getElementById('rollover-modal').classList.add('hidden'); let mc=0; const s=getStartOfWeek(state.currentDate); for(let i=0;i<7;i++){const c=new Date(s);c.setDate(c.getDate()+i);const ds=formatLocalDate(c);const nd=new Date(c);nd.setDate(nd.getDate()+7);const nds=formatLocalDate(nd);if(state.calendar[ds]){const u=[],f=[];state.calendar[ds].forEach(t=>{if(!t.isCompleted){if(m==='copy'){u.push({...t,id:generateId()});f.push(t);}else u.push(t);mc++;}else f.push(t);});if(m==='move')state.calendar[ds]=f;if(u.length>0){if(!state.calendar[nds])state.calendar[nds]=[];state.calendar[nds].push(...u);}}} if(mc>0){saveState();renderAll();showToast(`${m==='move'?'Moved':'Copied'} ${mc} tasks.`);} else showToast('No unfinished tasks.');}
+        async function exportData(){const d=JSON.stringify(state,null,2);const b=new Blob([d],{type:"application/json"});try{if(window.showSaveFilePicker&&window.location.protocol!=='file:'){const h=await window.showSaveFilePicker({suggestedName:'pats-todo-backup.json',types:[{description:'JSON File',accept:{'application/json':['.json']}}]});const w=await h.createWritable();await w.write(b);await w.close();showToast("Backup saved!");}else throw new Error('Fallback');}catch(e){if(e.name!=='AbortError'){document.getElementById('manual-download-link').href=URL.createObjectURL(b);document.getElementById('export-modal').classList.remove('hidden');}}}
+        function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=function(ev){try{const p=JSON.parse(ev.target.result);if(p&&typeof p==='object'){state={...state,...p};if(!Array.isArray(state.backlog))state.backlog=[];if(!Array.isArray(state.library))state.library=[];if(!state.calendar)state.calendar={};if(p.theme==='dark'||p.theme==='light'){state.themeValue=p.theme==='dark'?12:95;delete state.theme;}saveState();if(state.themeValue===undefined)state.themeValue=12;document.getElementById('theme-slider').value=state.themeValue;updateTheme(state.themeValue);renderAll();document.getElementById('app-title').textContent=state.appName;showToast("Backup restored!");}}catch(er){alert("Invalid backup file.");}};r.readAsText(f);e.target.value='';}
     </script>
 </body>
 </html>
